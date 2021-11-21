@@ -1,7 +1,8 @@
-import { log } from './logger.js';
+import { log, printToString } from './logger.js';
+import { parseString } from './parser.js';
 
-export function parse(codeString) {
-    return codeString
+export function parse(code) {
+    return parseString(code)
 }
 
 export function evalulate(ast) {
@@ -9,13 +10,13 @@ export function evalulate(ast) {
 }
 
 export function print(result) {
-    console.log(result)
+    log(printToString(result))
 }
 
 export function repl() {
     log('<mini-lisp>\ninitializing REPL\n')
     
-    let input = parse(`(1 2 3)`)
+    let input = parse(`(-201.345 ("eric" (3)) some-token ((4 5)))`)
     let result = evalulate(input)
     print(result)
 
