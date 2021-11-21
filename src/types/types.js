@@ -19,10 +19,9 @@ export const listType = () => ({
     last: nullType()
 })
 
-export const stringType = (token = '"') => ({
+export const stringType = (value = "") => ({
     type: TYPE.string,
-    value: "",
-    token
+    value
 })
 
 export const numberType = (value = 0) => ({

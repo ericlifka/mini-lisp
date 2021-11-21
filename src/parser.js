@@ -1,5 +1,5 @@
-import { addToList } from './types/list.js';
-import { listType, stringType, numberType, tokenType, TYPE } from './types/types.js';
+import { addToList } from './types/list';
+import { listType, stringType, numberType, tokenType, TYPE } from './types/types';
 
 const STATE = {
     ready: "ready",
@@ -8,7 +8,7 @@ const STATE = {
     inToken: "in-token",
 }
 
-const stringOpeningChars = "\"\'\`"
+const stringOpeningChar = "\""
 const numberChars = "0123456789."
 const numberSignChars = "+-"
 const symbolChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,/_-+?<>!@#$%^&*;:|"
@@ -26,8 +26,8 @@ export function parseString(string) {
     const shouldOpenList = ch => state === STATE.ready && ch === '('
     const shouldCloseList = ch => state === STATE.ready && ch === ')'
 
-    const shouldOpenString = ch => state === STATE.ready && stringOpeningChars.indexOf(ch) !== -1
-    const shouldCloseString = ch => state === STATE.inString && ch === current.token && !escapeFlag
+    const shouldOpenString = ch => state === STATE.ready && stringOpeningChar === ch
+    const shouldCloseString = ch => state === STATE.inString && ch === stringOpeningChar && !escapeFlag
     const shouldContinueString = ch => state === STATE.inString
     
     const shouldOpenNumber = ch => 
@@ -67,7 +67,7 @@ export function parseString(string) {
             newDataState(listType(), STATE.ready)
         }
         else if (shouldOpenString(ch)) {
-            newDataState(stringType(ch), STATE.inString)
+            newDataState(stringType(), STATE.inString)
         }
         else if (shouldOpenNumber(ch)) {
             newDataState(numberType(ch), STATE.inNumber)

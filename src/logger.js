@@ -1,4 +1,4 @@
-import { TYPE } from "./types/types.js"
+import { TYPE } from "./types/types"
 
 export const log = (...args) => {
     console.log(...args) // stub to make it easier to have a context aware logger later.
@@ -25,6 +25,8 @@ export const printToString = (cell) => {
 }
 
 const listToString = list => {
+    if (list.head.type === TYPE.null) return "()"
+
     let ptr = list.head
     let printStr = "("
 
@@ -39,11 +41,9 @@ const listToString = list => {
 }
 
 const stringToString = string =>
-    [
-        string.token,
+    `"${
         string.value
             .split('')
-            .map( ch => ch === string.token ? `\\${ch}`: ch)
-            .join(''),
-        string.token
-    ].join('')
+            .map( ch => ch === '"' ? `\\${ch}`: ch)
+            .join('')
+    }"`

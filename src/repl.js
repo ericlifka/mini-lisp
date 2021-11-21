@@ -1,5 +1,5 @@
-import { log, printToString } from './logger.js';
-import { parseString } from './parser.js';
+import { log, printToString } from './logger';
+import { parseString } from './parser';
 
 export function parse(code) {
     return parseString(code)

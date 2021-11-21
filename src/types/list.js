@@ -1,4 +1,4 @@
-import { TYPE, consType } from "./types.js";
+import { TYPE, consType } from "./types";
 
 export function addToList(list, value) {
     if (list.head.type === TYPE.null) {
