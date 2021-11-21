@@ -78,9 +78,6 @@ export function parseString(string) {
 
         else if (shouldCloseString(ch)) {
             popState()
-            if (shouldCloseList(ch)) {
-                popState()
-            }
         }
         else if (shouldCloseNumber(ch)) {
             let number = popState()

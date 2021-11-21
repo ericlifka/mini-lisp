@@ -1,4 +1,5 @@
 import { parseString } from '../src/parser';
+import { printToString } from "../src/logger";
 import { TYPE } from '../src/types/types';
 
 describe('numbers', () => {
@@ -54,5 +55,17 @@ describe('lists', () => {
         expect(parseString('()')).toHaveProperty("type", TYPE.list)
         expect(parseString('(1 2 3)')).toHaveProperty("type", TYPE.list)
         expect(parseString('("abc" a-token 123)')).toHaveProperty("type", TYPE.list)
+    })
+
+    test('number at end of list', () => {
+        expect(printToString(parseString('(123)'))).toBe('(123)')
+    })
+
+    test('string at end of list', () => {
+        expect(printToString(parseString('("abc")'))).toBe('("abc")')
+    })
+
+    test('token at end of list', () => {
+        expect(printToString(parseString('(token)'))).toBe("(token)")
     })
 })

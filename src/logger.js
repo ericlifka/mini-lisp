@@ -17,7 +17,7 @@ export const printToString = (cell) => {
             return `${cell.value}`
 
         case TYPE.cons:
-            return `(${printToString(cons.value)}, ${printToString(cons.next)})`
+            return `(${printToString(cell.value)}, ${printToString(cell.next)})`
 
         case TYPE.list:
             return listToString(cell)
@@ -44,6 +44,6 @@ const stringToString = string =>
     `"${
         string.value
             .split('')
-            .map( ch => ch === '"' ? `\\${ch}`: ch)
+            .map( ch => ch === '"' ? `\\${ch}` : ch)
             .join('')
     }"`
