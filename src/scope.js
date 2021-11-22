@@ -16,7 +16,7 @@ export function createScope(declaredSymbols, parent = getGlobalScope()) {
 
     declaredSymbols.forEach(([symbol, value]) => {
         assert(TYPE.token === symbol.type,
-            `Type error: Cannot only declare tokens as scoped values, tried to declare ${symbol.type}`)
+            `Type error: Cannot only declare tokens as scoped values, tried to declare ${symbol}`)
 
         scope.tokens[ symbol.value ] = value
     })

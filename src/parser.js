@@ -8,10 +8,7 @@ const STATE = {
     inToken: "in-token",
 }
 
-const stringOpeningChar = "\""
-const numberChars = "0123456789."
-const numberSignChars = "+-"
-const symbolChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,/_-+?<>!@#$%^&*;:|"
+const symbolChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./_-+?<>!@#$%^&*:|"
 const syntaxCloseChars = ")"
 
 export function parseString(string) {
@@ -26,16 +23,9 @@ export function parseString(string) {
     const shouldOpenList = ch => state === STATE.ready && ch === '('
     const shouldCloseList = ch => state === STATE.ready && ch === ')'
 
-    const shouldOpenString = ch => state === STATE.ready && stringOpeningChar === ch
-    const shouldCloseString = ch => state === STATE.inString && ch === stringOpeningChar && !escapeFlag
+    const shouldOpenString = ch => state === STATE.ready && '"' === ch
+    const shouldCloseString = ch => state === STATE.inString && ch === '"' && !escapeFlag
     const shouldContinueString = ch => state === STATE.inString
-    
-    const shouldOpenNumber = ch => 
-        state === STATE.ready && ( 
-            numberChars.indexOf(ch) !== -1 ||
-            numberSignChars.indexOf(ch) && numberChars.indexOf(input[position + 1]) !== -1)
-    const shouldCloseNumber = ch => state === STATE.inNumber && (/\s/.test(ch) || syntaxCloseChars.indexOf(ch) !== -1)
-    const shouldContinueNumber = ch => state === STATE.inNumber
 
     const shouldOpenToken = ch => state === STATE.ready && symbolChars.indexOf(ch) !== -1 
     const shouldCloseToken = ch => state === STATE.inToken && (/\s/.test(ch) || syntaxCloseChars.indexOf(ch) !== -1)
@@ -56,6 +46,15 @@ export function parseString(string) {
         return lastCell
     }
 
+    const checkForNumber = (token) => {
+        let num = Number(token.value)
+        if (!isNaN(num)) {
+            token.value = num
+            token.type = TYPE.number
+        }
+        return token
+    }
+
     while (position < input.length) {
         let ch = input[position]
 
@@ -69,9 +68,6 @@ export function parseString(string) {
         else if (shouldOpenString(ch)) {
             newDataState(stringType(), STATE.inString)
         }
-        else if (shouldOpenNumber(ch)) {
-            newDataState(numberType(ch), STATE.inNumber)
-        }
         else if (shouldOpenToken(ch)) {
             newDataState(tokenType(ch), STATE.inToken)
         }
@@ -79,15 +75,9 @@ export function parseString(string) {
         else if (shouldCloseString(ch)) {
             popState()
         }
-        else if (shouldCloseNumber(ch)) {
-            let number = popState()
-            number.value = parseFloat(number.value)
-            if (shouldCloseList(ch)) {
-                popState()
-            }
-        }
         else if (shouldCloseToken(ch)) {
-            popState()
+            checkForNumber(popState())
+
             if (shouldCloseList(ch)) {
                 popState()
             }
@@ -100,9 +90,6 @@ export function parseString(string) {
             current.value += ch
             escapeFlag = false
         }
-        else if (shouldContinueNumber(ch)) {
-            current.value += ch
-        }
         else if (shouldContinueToken(ch)) {
             current.value += ch
         }
@@ -110,8 +97,8 @@ export function parseString(string) {
         position++
     }
 
-    if (current && current.type === TYPE.number) {
-        current.value = parseFloat(current.value)
+    if (current && current.type === TYPE.token) {
+        checkForNumber(current)
     }
 
     return head.head.value

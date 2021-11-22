@@ -5,6 +5,7 @@ export const TYPE = {
     number: 'number',
     token: 'token',
     null: 'null',
+    specialForm: 'specialForm',
     function: 'function',
     macro: 'macro',
 }
@@ -40,14 +41,20 @@ export const nullType = () => ({
     type: TYPE.null
 })
 
+export const specialFormType = (doc, handler) => ({
+    type: TYPE.specialForm,
+    execute: handler,
+    doc
+})
+
 export const functionType = (doc, handler) => ({
     type: TYPE.function,
     execute: handler,
     doc
 })
 
-// export const macroType = (doc, handler) => ({
-//     type: TYPE.macro,
-//     execute: handler,
-//     doc
-// })
+export const macroType = (doc, handler) => ({
+    type: TYPE.macro,
+    execute: handler,
+    doc
+})

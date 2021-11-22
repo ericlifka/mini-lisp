@@ -52,3 +52,29 @@ describe('builtin functions', () => {
         })
     })
 })
+
+describe('builtin macros', () => {
+    describe('++1', () => {
+        test('converts to + with a 1 added to the expression', () => {
+            expect(run('(++1 2)')).toBe("3")
+        })
+
+        test('macro means it can handle any number of params', () => {
+            expect(run('(++1 2 3 4)')).toBe("10")
+        })
+    })
+})
+
+describe('special forms', () => {
+    describe('fn creates a function type', () => {
+        expect(runCode(parseString('(fn () 3)'))).toHaveProperty('type', TYPE.function)
+    })
+
+    describe('fn type call be called', () => {
+        expect(run('((fn () 3))')).toBe("3")
+    })
+
+    describe('fn type creates scoped parameter variables', () => {
+        expect(run('((fn (x) (+ x 3)) 2)')).toBe("5")
+    })
+})

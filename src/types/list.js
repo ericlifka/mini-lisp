@@ -1,6 +1,7 @@
 import { TYPE, consType, listType } from "./types";
 
 export function addToList(list, value) {
+    // WARNING: must only ever be used on a list being constructed, either by the parser or by a function creating a new list copy
     if (list.head.type === TYPE.null) {
         list.head = list.last = consType(value)
     }
@@ -35,4 +36,15 @@ export function promoteConsToList(cons) {
     newList.last = ptr
     
     return newList
+}
+
+export function onlyTokensInList(list) {
+    let ptr = list.head
+    while (ptr.type !== TYPE.null) {
+        if (ptr.value.type !== TYPE.token) {
+            return false
+        }
+        ptr = ptr.next
+    }
+    return true
 }

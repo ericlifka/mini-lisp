@@ -19,6 +19,24 @@ describe('numbers', () => {
         expect(parseString('0.123')).toHaveProperty("value", .123)
         expect(parseString('-.123')).toHaveProperty("value", -.123)
     })
+
+    test('can recognize scientific notation', () => {
+        expect(parseString('1e10')).toHaveProperty('value', 10000000000)
+    })
+
+    test('can recognize other bases', () => {
+        expect(parseString('0xff')).toHaveProperty('value', 255)
+        expect(parseString('0b11111111')).toHaveProperty('value', 255)
+        expect(parseString('0o377')).toHaveProperty('value', 255)
+    })
+
+    test('invalid numbers are treated as tokens', () => {
+        expect(parseString('...123')).toEqual({ type: TYPE.token, value: "...123"})
+        expect(parseString('1..2')).toEqual({ type: TYPE.token, value: "1..2"})
+        expect(parseString('++1')).toEqual({ type: TYPE.token, value: "++1"})
+        expect(parseString('12.345.6')).toEqual({ type: TYPE.token, value: '12.345.6'})
+        
+    })
 })
 
 
