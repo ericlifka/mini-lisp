@@ -14,7 +14,7 @@ export const builtIns = [
     /* [ token('sym'), handler(function () {})] or something, idk yet */
 
     // Math
-    [token('+'),  fn( argsList => {
+    [token('+'), fn("(fn + ...numbers)", argsList => {
         let val = 0
         let ptr = argsList.head
         while (ptr.type !== TYPE.null) {

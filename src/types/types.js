@@ -40,11 +40,14 @@ export const nullType = () => ({
     type: TYPE.null
 })
 
-export const functionType = (handler) => ({
+export const functionType = (doc, handler) => ({
     type: TYPE.function,
-    execute: handler
+    execute: handler,
+    doc
 })
 
-export const macroType = () => ({
-    type: TYPE.macro
-})
+// export const macroType = (doc, handler) => ({
+//     type: TYPE.macro,
+//     execute: handler,
+//     doc
+// })

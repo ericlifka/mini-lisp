@@ -5,6 +5,8 @@ import { mapList, promoteConsToList } from "./types/list";
 import { TYPE } from "./types/types";
 
 export function runCode(code, scope = getGlobalScope()) {
+    assert(code && code.type, `Unrecognized entity error: can not evaluate entity ${code}`)
+
     switch (code.type) {
         case TYPE.string:
         case TYPE.number:
@@ -37,9 +39,9 @@ function runList(list, scope) {
 
         return executor.execute(argList)
     }
-    else if (executor.type === TYPE.macro) {
+    // else if (executor.type === TYPE.macro) {
 
-    }
+    // }
     
     assert(false, `Invalid Function error: list ${
         printToString(list)} cannot be executed because ${

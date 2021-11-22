@@ -2,9 +2,13 @@ import { TYPE } from "./types/types"
 import { assert } from "./assert"
 import { builtIns } from "./built-ins"
 
-export const getGlobalScope = () => __GLOBAL_SCOPE__
+const __GLOBAL_SCOPE__ = createScope(builtIns)
 
-export function newScope(declaredSymbols, parent = getGlobalScope()) {
+export function getGlobalScope() {
+    return __GLOBAL_SCOPE__
+}
+
+export function createScope(declaredSymbols, parent = getGlobalScope()) {
     let scope = {
         parent,
         tokens: { }
@@ -35,5 +39,3 @@ export function lookupOnScopeChain(symbol, scopeChain) {
 
     assert(false, `Undeclared variable error: token (${symbol.value}) not defined in scope`)
 }
-
-const __GLOBAL_SCOPE__ = newScope(builtIns)

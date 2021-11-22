@@ -1,4 +1,6 @@
 import { printToString, log } from "../src/logger";
+import { parseString } from "../src/parser";
+import { runCode } from "../src/eval";
 import { numberType, stringType, tokenType, nullType, consType } from "../src/types/types";
 
 describe('printToString', () => {
@@ -22,6 +24,10 @@ describe('printToString', () => {
 
     test('can print a cons cell', () => {
         expect(printToString(consType(numberType(5)))).toBe('(5, null)')
+    })
+
+    test('can print a built in function', () => {
+        expect(printToString(runCode(parseString('+')))).toBe('(fn + ...numbers)')
     })
 })
 
