@@ -21,6 +21,12 @@ export const printToString = (cell) => {
 
         case TYPE.list:
             return listToString(cell)
+
+        case TYPE.function: 
+            return '(fn ...)' // TODO
+
+        case TYPE.macro: 
+            return '(macro ...)' // TODO
     }
 }
 

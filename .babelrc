@@ -6,5 +6,7 @@
                 "node": "current"
             }
         }]
-    ]
+    ],
+    "sourceMaps": "inline",
+    "retainLines": true
 }

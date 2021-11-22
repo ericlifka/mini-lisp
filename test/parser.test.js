@@ -51,6 +51,8 @@ describe('tokens', () => {
 
 
 describe('lists', () => {
+    const parse = input => printToString(parseString(input))
+
     test('can recognize a list', () => {
         expect(parseString('()')).toHaveProperty("type", TYPE.list)
         expect(parseString('(1 2 3)')).toHaveProperty("type", TYPE.list)
@@ -58,14 +60,38 @@ describe('lists', () => {
     })
 
     test('number at end of list', () => {
-        expect(printToString(parseString('(123)'))).toBe('(123)')
+        expect(parse('(123)')).toBe('(123)')
     })
 
     test('string at end of list', () => {
-        expect(printToString(parseString('("abc")'))).toBe('("abc")')
+        expect(parse('("abc")')).toBe('("abc")')
     })
 
     test('token at end of list', () => {
-        expect(printToString(parseString('(token)'))).toBe("(token)")
+        expect(parse('(token)')).toBe("(token)")
+    })
+
+    test('empty list', () => {
+        expect(parse("()")).toBe("()")
+    })
+    
+    test('simple list', () => {
+        expect(parse("(1 2 3)")).toBe("(1 2 3)")
+    })
+    
+    test('nested list', () => {
+        expect(parse("(1 (2 (3)))")).toBe("(1 (2 (3)))")
+    })
+    
+    test('list in first position of list', () => {
+        expect(parse("((1 2) 3)")).toBe("((1 2) 3)")
+    })
+    
+    test('lists can have any type', () => {
+        expect(parse('("abc" 123 -some-token-)')).toBe('("abc" 123 -some-token-)')
+    })
+    
+    test('lists ignore whitespace', () => {
+        expect(parse('( 123    "abc"  token )')).toBe('(123 "abc" token)')
     })
 })
