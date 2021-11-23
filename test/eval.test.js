@@ -64,17 +64,3 @@ describe('builtin macros', () => {
         })
     })
 })
-
-describe('special forms', () => {
-    describe('fn creates a function type', () => {
-        expect(runCode(parseString('(fn () 3)'))).toHaveProperty('type', TYPE.function)
-    })
-
-    describe('fn type call be called', () => {
-        expect(run('((fn () 3))')).toBe("3")
-    })
-
-    describe('fn type creates scoped parameter variables', () => {
-        expect(run('((fn (x) (+ x 3)) 2)')).toBe("5")
-    })
-})

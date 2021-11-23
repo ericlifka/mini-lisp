@@ -1,4 +1,4 @@
-import { TYPE, consType, listType } from "./types";
+import { TYPE, consType, listType, nullType } from "./types";
 
 export function addToList(list, value) {
     // WARNING: must only ever be used on a list being constructed, either by the parser or by a function creating a new list copy
@@ -38,13 +38,40 @@ export function promoteConsToList(cons) {
     return newList
 }
 
-export function onlyTokensInList(list) {
+export function listLength(list) {
+    let ptr = list.head
+    let count = 0
+    while (ptr.type !== TYPE.null) {
+        count++
+        ptr = ptr.next
+    }
+    return count
+}
+
+export function listAllOneType(list, type) {
     let ptr = list.head
     while (ptr.type !== TYPE.null) {
-        if (ptr.value.type !== TYPE.token) {
+        if (ptr.value.type !== type) {
             return false
         }
         ptr = ptr.next
     }
     return true
+}
+
+export function listGetAtIndex(list, index) {
+    if (index < 0) return nullType()
+
+    let ptr = list.head
+    let count = 0
+    while (ptr.type !== TYPE.null) {
+        if (count === index) {
+            return ptr.value
+        }
+
+        count++
+        ptr = ptr.next
+    }
+
+    return nullType()
 }

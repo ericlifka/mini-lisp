@@ -10,6 +10,7 @@ export function runCode(code, scope = getGlobalScope()) {
     switch (code.type) {
         case TYPE.string:
         case TYPE.number:
+        case TYPE.boolean:
         case TYPE.null:
         case TYPE.cons:
         case TYPE.function:

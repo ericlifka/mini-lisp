@@ -2,7 +2,7 @@ import { assert } from "../assert"
 import { runCode } from "../eval"
 import { printToString } from "../logger"
 import { createScope } from "../scope"
-import { onlyTokensInList, promoteConsToList } from "../types/list"
+import { listAllOneType, promoteConsToList } from "../types/list"
 import { 
     tokenType,
     specialFormType,
@@ -23,7 +23,7 @@ export function fnSpecialForm(argsList, creationScope) {
 
     let parameterList = first.value
     let bodyPtr = first.next
-    assert(onlyTokensInList(parameterList), `<fn special form: only tokens can be provided as parameters, got ${JSON.stringify(parameterList, null, 2)}>`)
+    assert(listAllOneType(parameterList, TYPE.token), `<fn special form: only tokens can be provided as parameters, got ${JSON.stringify(parameterList, null, 2)}>`)
     
     let functionEntity = functionType(
         `(${name ? name.value : 'fn'} ${printToString(parameterList)} ...)`,
