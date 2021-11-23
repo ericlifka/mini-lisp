@@ -39,6 +39,19 @@ describe('numbers', () => {
     })
 })
 
+describe('booleans', () => {
+    test('parses a boolean literal', () => {
+        expect(parseString("true")).toEqual({
+            type: TYPE.boolean,
+            value: true
+        })
+        expect(parseString("false")).toEqual({
+            type: TYPE.boolean,
+            value: false
+        })
+    })
+})
+
 
 describe('strings', () => {
     test('parses a string literal', () => {

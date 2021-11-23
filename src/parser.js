@@ -46,11 +46,15 @@ export function parseString(string) {
         return lastCell
     }
 
-    const checkForNumber = (token) => {
+    const checkForConversions = (token) => {
         let num = Number(token.value)
         if (!isNaN(num)) {
             token.value = num
             token.type = TYPE.number
+        }
+        if (token.value === "true" || token.value === "false") {
+            token.value = token.value === "true"
+            token.type = TYPE.boolean
         }
         return token
     }
@@ -76,7 +80,7 @@ export function parseString(string) {
             popState()
         }
         else if (shouldCloseToken(ch)) {
-            checkForNumber(popState())
+            checkForConversions(popState())
 
             if (shouldCloseList(ch)) {
                 popState()
@@ -98,7 +102,7 @@ export function parseString(string) {
     }
 
     if (current && current.type === TYPE.token) {
-        checkForNumber(current)
+        checkForConversions(current)
     }
 
     return head.head.value

@@ -1,7 +1,7 @@
 import { printToString, log } from "../src/logger";
 import { parseString } from "../src/parser";
 import { runCode } from "../src/eval";
-import { numberType, stringType, tokenType, nullType, consType } from "../src/types/types";
+import { numberType, stringType, tokenType, nullType, consType, booleanType } from "../src/types/types";
 
 describe('printToString', () => {
     test('can print a number', () => {
@@ -12,6 +12,11 @@ describe('printToString', () => {
         expect(printToString(stringType("abc"))).toBe('"abc"')
         expect(printToString(stringType('a"bc'))).toBe('"a\\"bc"')
         expect(printToString(stringType(""))).toBe('""')
+    })
+
+    test('can print a boolean', () => {
+        expect(printToString(booleanType(true))).toBe('true')
+        expect(printToString(booleanType(false))).toBe('false')
     })
 
     test('can print a token', () => {

@@ -1,4 +1,4 @@
-import { TYPE, consType, numberType, tokenType } from "../src/types/types";
+import { TYPE, consType, numberType, tokenType, booleanType } from "../src/types/types";
 
 describe("cons cells", () => {
     test("empty cons", () => {
@@ -43,5 +43,11 @@ describe('numbers', () => {
 describe('tokens', () => {
     test('defaults to empty string', () => {
         expect(tokenType()).toHaveProperty("value", "")
+    })
+})
+
+describe('booleans', () => {
+    test('defaults to false', () => {
+        expect(booleanType()).toHaveProperty("value", false)
     })
 })

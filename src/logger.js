@@ -12,8 +12,9 @@ export const printToString = (cell) => {
         case TYPE.string:
             return stringToString(cell)
 
-        case TYPE.number: 
-        case TYPE.token: 
+        case TYPE.boolean:
+        case TYPE.number:
+        case TYPE.token:
             return `${cell.value}`
 
         case TYPE.cons:
