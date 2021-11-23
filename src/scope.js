@@ -1,6 +1,6 @@
 import { TYPE } from "./types/types"
 import { assert } from "./assert"
-import { builtIns } from "./built-ins"
+import builtIns from "./language-forms"
 
 const __GLOBAL_SCOPE__ = createScope(builtIns)
 
