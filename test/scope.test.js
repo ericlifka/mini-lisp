@@ -7,7 +7,7 @@ describe('scopes', () => {
         [tokenType(sym), stringType(strVal)]
     ], parent)
 
-    let lookup = (sym, scope) => lookupOnScopeChain(tokenType(sym), scope)
+    let lookup = (sym, scope) => lookupOnScopeChain(scope, tokenType(sym))
 
     test('can look up a value on a scope', () => {
         let scope = create('a', 'abc')

@@ -18,7 +18,7 @@ export function runCode(code, scope = getGlobalScope()) {
             return code
 
         case TYPE.token:
-            return lookupOnScopeChain(code, scope)
+            return lookupOnScopeChain(scope, code)
 
         case TYPE.list:
             return runList(code, scope)

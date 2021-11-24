@@ -2,7 +2,8 @@ import { TYPE } from "./types/types"
 import { assert } from "./assert"
 import builtIns from "./language-forms"
 
-const __GLOBAL_SCOPE__ = createScope(builtIns)
+const __LANGUAGE_SCOPE__ = createScope(builtIns)
+const __GLOBAL_SCOPE__ = createScope([], __LANGUAGE_SCOPE__)
 
 export function getGlobalScope() {
     return __GLOBAL_SCOPE__
@@ -10,7 +11,7 @@ export function getGlobalScope() {
 
 export function createScope(declaredSymbols, parent = getGlobalScope()) {
     let scope = {
-        parent,
+        parent, 
         tokens: { }
     }
 
@@ -24,7 +25,7 @@ export function createScope(declaredSymbols, parent = getGlobalScope()) {
     return scope
 }
 
-export function lookupOnScopeChain(symbol, scopeChain) {
+export function lookupOnScopeChain(scopeChain, symbol) {
     assert(TYPE.token === symbol.type,
         `Type error: type ${symbol.type} can not be retrieved from scope`)
 
@@ -38,4 +39,10 @@ export function lookupOnScopeChain(symbol, scopeChain) {
     }
 
     assert(false, `Undeclared variable error: token (${symbol.value}) not defined in scope`)
+}
+
+export function setOnScope(scope, symbol, value) {
+    assert(TYPE.token === symbol.type, `Type error: type ${symbol.type} can not be set on scope`)
+    
+    scope.tokens[ symbol.value ] = value
 }
