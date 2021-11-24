@@ -25,9 +25,14 @@ export function createScope(declaredSymbols, parent = getGlobalScope()) {
     return scope
 }
 
+export function lookupOnScope(scope, symbol) {
+    assert(TYPE.token === symbol.type, `Type error: type ${symbol.type} can not be retrieved from scope`)
+    
+    return scope.tokens[ symbol.value ]
+}
+
 export function lookupOnScopeChain(scopeChain, symbol) {
-    assert(TYPE.token === symbol.type,
-        `Type error: type ${symbol.type} can not be retrieved from scope`)
+    assert(TYPE.token === symbol.type, `Type error: type ${symbol.type} can not be retrieved from scope`)
 
     let scope = scopeChain
     while (scope) {

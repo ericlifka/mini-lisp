@@ -1,11 +1,9 @@
 import { runCode } from "../../src/eval"
-import { printToString } from "../../src/logger"
 import { parseString } from "../../src/parser"
 import { TYPE } from "../../src/types/types"
+import { run } from "../test-run-helper"
 
 describe('(fn ...)', () => {
-    let run = input => printToString(runCode(parseString(input)))
-
     test('fn creates a function type', () => {
         expect(runCode(parseString('(fn () 3)'))).toHaveProperty('type', TYPE.function)
     })
