@@ -46,10 +46,23 @@ function andForm(argList, scope) {
 
 function orForm(argList, scope) {
     let count = listLength(argList)
-    let result
+    let result 
+
+    for (let i = 0; i < count; i++) {
+        let arg = listGetAtIndex(argList, i)
+        result = runCode(arg, scope)
+
+        if (isTruthy(result)) {
+            return result
+        }
+    }
+
+    return result
 }
 
 export default [
     [ tokenType('bool'), functionType(`(bool expr)`, boolForm) ],
-    [ tokenType('not'), functionType(`(not expr)`, notForm) ]
+    [ tokenType('not'), functionType(`(not expr)`, notForm) ],
+    [ tokenType('and'), specialFormType(`(and expr1 expr2 ...)`, andForm) ],
+    [ tokenType('or'), specialFormType(`(or expr1 expr2 ...)`, orForm) ],
 ]
