@@ -35,4 +35,8 @@ describe('let special form', () => {
                         (let (x 3) x)
                         x)`)).toBe("1")
     })
+
+    test('let handles being empty', () => {
+        expect(run(`(let)`)).toBe('null')
+    })
 })

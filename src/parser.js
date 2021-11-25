@@ -19,6 +19,7 @@ export function parseString(string) {
     let state = STATE.ready
     let position = 0
     let escapeFlag = false
+    let quoteFlag = false
 
     const shouldOpenList = ch => state === STATE.ready && ch === '('
     const shouldCloseList = ch => state === STATE.ready && ch === ')'
@@ -33,6 +34,13 @@ export function parseString(string) {
 
     const newDataState = (cell, _state) => {
         addToList(current, cell)
+
+        if (quoteFlag) {
+            cell.__special_quote__ = true
+            cell.__parent_cons__ = current.last
+            quoteFlag = false
+        }
+        
         parents.push(current)
         current = cell
         state = _state
@@ -43,6 +51,9 @@ export function parseString(string) {
         let lastCell = current
         current = parents.pop()
         state = STATE.ready
+
+        checkForUnfinishedEscapeQuote(lastCell)
+
         return lastCell
     }
 
@@ -59,10 +70,25 @@ export function parseString(string) {
         return token
     }
 
+    const checkForUnfinishedEscapeQuote = (cell) => {
+        if (cell.__special_quote__) {
+            let quote = listType()
+            addToList(quote, tokenType('quote'))
+            addToList(quote, cell)
+            cell.__parent_cons__.value = quote
+
+            delete cell.__special_quote__
+            delete cell.__parent_cons__
+        }
+    }
+
     while (position < input.length) {
         let ch = input[position]
 
-        if (ch === '\\' && !escapeFlag) {
+        if (ch === "'" && state === STATE.ready) {
+            quoteFlag = true
+        }
+        else if (ch === '\\' && !escapeFlag) {
             escapeFlag = true
         }
 
@@ -104,6 +130,8 @@ export function parseString(string) {
     if (current && current.type === TYPE.token) {
         checkForConversions(current)
     }
+
+    checkForUnfinishedEscapeQuote(current)
 
     return head.head.value
 }

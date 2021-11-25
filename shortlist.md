@@ -1,2 +1,12 @@
-update
-figure out named functions
+and/or
+equal
+defn
+defmacro
+comments
+modules
+list functions
+
+better repl
+loading and running of files
+
+loading stdlib functions in mlisp

@@ -1,6 +1,8 @@
 import { parseString } from '../src/parser';
 import { printToString } from "../src/logger";
 import { TYPE } from '../src/types/types';
+import { parse } from './test-run-helper';
+
 
 describe('numbers', () => {
     test('parses a number literal', () => {
@@ -82,8 +84,6 @@ describe('tokens', () => {
 
 
 describe('lists', () => {
-    const parse = input => printToString(parseString(input))
-
     test('can recognize a list', () => {
         expect(parseString('()')).toHaveProperty("type", TYPE.list)
         expect(parseString('(1 2 3)')).toHaveProperty("type", TYPE.list)
@@ -124,5 +124,25 @@ describe('lists', () => {
     
     test('lists ignore whitespace', () => {
         expect(parse('( 123    "abc"  token )')).toBe('(123 "abc" token)')
+    })
+})
+
+describe('quote reader macro', () => {
+    test("can quote items with ' char", () => {
+        expect(parse(`'(1 2 3)`)).toBe(`(quote (1 2 3))`)
+    })
+
+    test("escape quotes can be anywhere in the tree", () => {
+        expect(parse(`(something '(1 2 3))`)).toBe(`(something (quote (1 2 3)))`)
+    })
+
+    test("escape quote works on literal types as well", () => {
+        expect(parse(`(something '1 2)`)).toBe(`(something (quote 1) 2)`)
+    })
+
+    test("escape on naked literals", () => {
+        expect(parse(`'token`)).toBe(`(quote token)`)
+        expect(parse(`'"str"`)).toBe(`(quote "str")`)
+        expect(parse(`'123`)).toBe(`(quote 123)`)
     })
 })

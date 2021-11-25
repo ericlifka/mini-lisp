@@ -15,7 +15,7 @@ import {
 export function fnSpecialForm(argsList, creationScope) {
     let name = null
     let first = argsList.head
-    if (TYPE.string === first.value.type) {
+    if (TYPE.token === first.value.type) {
         name = first.value
         first = first.next
     }
@@ -43,7 +43,7 @@ export function fnSpecialForm(argsList, creationScope) {
                     assert(tokensPtr.next.type === TYPE.null, 
                         `<fn special form: ...spread parameter can only be at end of parameters list`)
 
-                    currentToken = Type(currentToken.value.slice(3))
+                    currentToken = tokenType(currentToken.value.slice(3))
                     value = valuesPtr.type === TYPE.null
                                 ? listType()
                                 : promoteConsToList(valuesPtr)
@@ -65,12 +65,13 @@ export function fnSpecialForm(argsList, creationScope) {
             }
 
             let functionScope = createScope(scopeParams, creationScope)
+            let body = bodyPtr
             let evalResult
 
-            while (bodyPtr.type !== TYPE.null) {
-                evalResult = runCode(bodyPtr.value, functionScope)
+            while (body.type !== TYPE.null) {
+                evalResult = runCode(body.value, functionScope)
 
-                bodyPtr = bodyPtr.next
+                body = body.next
             }
 
             return evalResult

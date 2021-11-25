@@ -46,6 +46,21 @@ export function lookupOnScopeChain(scopeChain, symbol) {
     assert(false, `Undeclared variable error: token (${symbol.value}) not defined in scope`)
 }
 
+export function findDeclaredInScope(scopeChain, symbol) {
+    assert(TYPE.token === symbol.type, `Type error: type ${symbol.type} can not be retrieved from scope`)
+
+    let scope = scopeChain
+    while (scope) {
+        if (symbol.value in scope.tokens) {
+            return scope
+        }
+
+        scope = scope.parent
+    }
+
+    return null
+}
+
 export function setOnScope(scope, symbol, value) {
     assert(TYPE.token === symbol.type, `Type error: type ${symbol.type} can not be set on scope`)
     

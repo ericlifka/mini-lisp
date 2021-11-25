@@ -2,6 +2,7 @@ import { assert } from "../assert";
 import { runCode } from "../eval";
 import { listGetAtIndex, listLength } from "../types/list";
 import { specialFormType, tokenType, TYPE } from "../types/types";
+import { isTruthy } from "../logic/booleans";
 
 export function ifSpecialForm(argsList, scope) {
     assert(listLength(argsList) === 3,
@@ -12,10 +13,9 @@ export function ifSpecialForm(argsList, scope) {
     let falsePath = listGetAtIndex(argsList, 2)
 
     let bool = runCode(boolCheck, scope)
-    return ( bool.type === TYPE.boolean && bool.value === false )
-          || bool.type === TYPE.null
-                ? runCode(falsePath, scope)
-                : runCode(truePath, scope) 
+    return isTruthy(bool)
+            ? runCode(truePath, scope)
+            : runCode(falsePath, scope)
 }
 
 export default [tokenType('if'), specialFormType('<if special form>', ifSpecialForm)]
