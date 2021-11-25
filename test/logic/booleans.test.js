@@ -8,6 +8,7 @@ describe('logic helpers for booleans', () => {
         expect(run(`(bool 0)`)).toBe('false')
         expect(run(`(bool '(false))`)).toBe('true')
         expect(run(`(bool '())`)).toBe('false')
+        expect(run(`(bool "")`)).toBe('false')
     })
     test('(not expr) determines if something is falsey', () => {
         expect(run(`(not false)`)).toBe('true')
@@ -16,6 +17,7 @@ describe('logic helpers for booleans', () => {
         expect(run(`(not 0)`)).toBe('true')
         expect(run(`(not '(false))`)).toBe('false')
         expect(run(`(not '())`)).toBe('true')
+        expect(run(`(not "")`)).toBe('true')
     })
 
     test('(or ...exprs)', () => {

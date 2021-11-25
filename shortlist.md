@@ -1,4 +1,3 @@
-and/or
 equal
 defn
 defmacro
