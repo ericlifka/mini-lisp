@@ -1,24 +1,31 @@
-import { log, printToString } from './logger';
-import { parseString } from './parser';
+import { log, printToString } from './logger'
+import { parseString } from './parser'
+import { runCode } from './eval'
+import repl from 'repl'
 
 export function parse(code) {
     return parseString(code)
 }
 
 export function evalulate(ast) {
-    return ast
+    return runCode(ast)
 }
 
 export function print(result) {
     log(printToString(result))
 }
 
-export function repl() {
+export function start() {
     log('<mini-lisp>\ninitializing REPL\n')
-    
-    let input = parse(`(-201.345 ("eric" (3)) some-token ((4 5)))`)
-    let result = evalulate(input)
-    print(result)
 
-    log('\nterminating REPL\n')
+    repl.start({
+        prompt: '> ',
+        eval: (input, context, filename, cb) => {
+            let ast = parse(input)
+            let result = evalulate(ast)
+            let stringResult = printToString(result)
+
+            cb(null, stringResult)
+        },
+    }).addListener('exit', () => log('\nterminating REPL\n'))
 }
