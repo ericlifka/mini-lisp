@@ -1,4 +1,3 @@
-equal
 defn
 defmacro
 comments
