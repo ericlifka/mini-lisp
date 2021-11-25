@@ -14,53 +14,53 @@ export const TYPE = {
 export const consType = (value = nullType(), next = nullType()) => ({
     type: TYPE.cons,
     value,
-    next
+    next,
 })
 
 export const listType = () => ({
     type: TYPE.list,
     head: nullType(),
-    last: nullType()
+    last: nullType(),
 })
 
 export const booleanType = (value = false) => ({
     type: TYPE.boolean,
-    value
+    value,
 })
 
-export const stringType = (value = "") => ({
+export const stringType = (value = '') => ({
     type: TYPE.string,
-    value
+    value,
 })
 
 export const numberType = (value = 0) => ({
     type: TYPE.number,
-    value
+    value,
 })
 
-export const tokenType = (value = "") => ({
+export const tokenType = (value = '') => ({
     type: TYPE.token,
-    value
+    value,
 })
 
 export const nullType = () => ({
-    type: TYPE.null
+    type: TYPE.null,
 })
 
 export const specialFormType = (doc, handler) => ({
     type: TYPE.specialForm,
     execute: handler,
-    doc
+    doc,
 })
 
 export const functionType = (doc, handler) => ({
     type: TYPE.function,
     execute: handler,
-    doc
+    doc,
 })
 
 export const macroType = (doc, handler) => ({
     type: TYPE.macro,
     execute: handler,
-    doc
+    doc,
 })

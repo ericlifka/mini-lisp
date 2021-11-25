@@ -1,4 +1,4 @@
-import { run } from "../test-run-helper"
+import { run } from '../test-run-helper'
 
 describe('quote special form', () => {
     test('quote prevents something from being evaluated', () => {

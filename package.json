@@ -4,7 +4,7 @@
     "description": "A Mini Lisp environment to run inside javascript",
     "main": "src/index.js",
     "scripts": {
-        "format": "prettier --write '**/*.js'",
+        "format": "prettier --write .",
         "build": "babel src/ --out-dir dist/",
         "start": "npm run build && node dist/index.js",
         "test": "jest"

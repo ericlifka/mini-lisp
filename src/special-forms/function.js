@@ -1,16 +1,16 @@
-import { assert } from "../assert"
-import { runCode } from "../eval"
-import { printToString } from "../logger"
-import { createScope } from "../scope"
-import { listAllOneType, promoteConsToList } from "../types/list"
-import { 
+import { assert } from '../assert'
+import { runCode } from '../eval'
+import { printToString } from '../logger'
+import { createScope } from '../scope'
+import { listAllOneType, promoteConsToList } from '../types/list'
+import {
     tokenType,
     specialFormType,
     functionType,
     nullType,
     listType,
-    TYPE
-} from "../types/types"
+    TYPE,
+} from '../types/types'
 
 export function fnSpecialForm(argsList, creationScope) {
     let name = null
@@ -19,16 +19,26 @@ export function fnSpecialForm(argsList, creationScope) {
         name = first.value
         first = first.next
     }
-    assert(TYPE.list === first.value.type, `<fn special form: must provide parameter list>`)
+    assert(
+        TYPE.list === first.value.type,
+        `<fn special form: must provide parameter list>`,
+    )
 
     let parameterList = first.value
     let bodyPtr = first.next
-    assert(listAllOneType(parameterList, TYPE.token), `<fn special form: only tokens can be provided as parameters, got ${JSON.stringify(parameterList, null, 2)}>`)
-    
+    assert(
+        listAllOneType(parameterList, TYPE.token),
+        `<fn special form: only tokens can be provided as parameters, got ${JSON.stringify(
+            parameterList,
+            null,
+            2,
+        )}>`,
+    )
+
     let functionEntity = functionType(
         `(${name ? name.value : 'fn'} ${printToString(parameterList)} ...)`,
         (params) => {
-            let scopeParams = [ [tokenType('recur'), functionEntity] ]
+            let scopeParams = [[tokenType('recur'), functionEntity]]
             if (name) {
                 scopeParams.push([name, functionEntity])
             }
@@ -39,24 +49,28 @@ export function fnSpecialForm(argsList, creationScope) {
                 let currentToken = tokensPtr.value
                 let value
 
-                if (currentToken.value.slice(0,3) === "...") { // this is a rest param
-                    assert(tokensPtr.next.type === TYPE.null, 
-                        `<fn special form: ...spread parameter can only be at end of parameters list`)
+                if (currentToken.value.slice(0, 3) === '...') {
+                    // this is a rest param
+                    assert(
+                        tokensPtr.next.type === TYPE.null,
+                        `<fn special form: ...spread parameter can only be at end of parameters list`,
+                    )
 
                     currentToken = tokenType(currentToken.value.slice(3))
-                    value = valuesPtr.type === TYPE.null
-                                ? listType()
-                                : promoteConsToList(valuesPtr)
-                    
+                    value =
+                        valuesPtr.type === TYPE.null
+                            ? listType()
+                            : promoteConsToList(valuesPtr)
+
                     valuesPtr = nullType() // move pointer to end of list because all params have been consumed
-                }
-                else {
-                    value = valuesPtr.type === TYPE.null
-                                ? nullType()
-                                : valuesPtr.value
+                } else {
+                    value =
+                        valuesPtr.type === TYPE.null
+                            ? nullType()
+                            : valuesPtr.value
                 }
 
-                scopeParams.push([ currentToken, value ])
+                scopeParams.push([currentToken, value])
 
                 tokensPtr = tokensPtr.next
                 if (valuesPtr.type !== TYPE.null) {
@@ -75,10 +89,13 @@ export function fnSpecialForm(argsList, creationScope) {
             }
 
             return evalResult
-        }
+        },
     )
 
     return functionEntity
 }
 
-export default [tokenType('fn'), specialFormType('<fn special form>', fnSpecialForm)]
+export default [
+    tokenType('fn'),
+    specialFormType('<fn special form>', fnSpecialForm),
+]

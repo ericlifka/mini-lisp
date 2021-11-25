@@ -1,25 +1,24 @@
-import { parseString } from '../src/parser';
-import { printToString } from "../src/logger";
-import { TYPE } from '../src/types/types';
-import { parse } from './test-run-helper';
-
+import { parseString } from '../src/parser'
+import { printToString } from '../src/logger'
+import { TYPE } from '../src/types/types'
+import { parse } from './test-run-helper'
 
 describe('numbers', () => {
     test('parses a number literal', () => {
-        expect(parseString("1")).toEqual({
+        expect(parseString('1')).toEqual({
             type: TYPE.number,
-            value: 1
+            value: 1,
         })
     })
 
     test('can recognize a negative number', () => {
-        expect(parseString('-123')).toHaveProperty("value", -123)
+        expect(parseString('-123')).toHaveProperty('value', -123)
     })
 
     test('can recognize decimals', () => {
-        expect(parseString('.123')).toHaveProperty("value", .123)
-        expect(parseString('0.123')).toHaveProperty("value", .123)
-        expect(parseString('-.123')).toHaveProperty("value", -.123)
+        expect(parseString('.123')).toHaveProperty('value', 0.123)
+        expect(parseString('0.123')).toHaveProperty('value', 0.123)
+        expect(parseString('-.123')).toHaveProperty('value', -0.123)
     })
 
     test('can recognize scientific notation', () => {
@@ -33,61 +32,69 @@ describe('numbers', () => {
     })
 
     test('invalid numbers are treated as tokens', () => {
-        expect(parseString('...123')).toEqual({ type: TYPE.token, value: "...123"})
-        expect(parseString('1..2')).toEqual({ type: TYPE.token, value: "1..2"})
-        expect(parseString('++1')).toEqual({ type: TYPE.token, value: "++1"})
-        expect(parseString('12.345.6')).toEqual({ type: TYPE.token, value: '12.345.6'})
-        
+        expect(parseString('...123')).toEqual({
+            type: TYPE.token,
+            value: '...123',
+        })
+        expect(parseString('1..2')).toEqual({ type: TYPE.token, value: '1..2' })
+        expect(parseString('++1')).toEqual({ type: TYPE.token, value: '++1' })
+        expect(parseString('12.345.6')).toEqual({
+            type: TYPE.token,
+            value: '12.345.6',
+        })
     })
 })
 
 describe('booleans', () => {
     test('parses a boolean literal', () => {
-        expect(parseString("true")).toEqual({
+        expect(parseString('true')).toEqual({
             type: TYPE.boolean,
-            value: true
+            value: true,
         })
-        expect(parseString("false")).toEqual({
+        expect(parseString('false')).toEqual({
             type: TYPE.boolean,
-            value: false
+            value: false,
         })
     })
 })
-
 
 describe('strings', () => {
     test('parses a string literal', () => {
         expect(parseString('"abcd"')).toEqual({
             type: TYPE.string,
-            value: "abcd"
+            value: 'abcd',
         })
     })
 
     test('escape allows quotes to be inside strings', () => {
-        expect(parseString('"ab\\"cd"')).toHaveProperty("value", 'ab"cd')
+        expect(parseString('"ab\\"cd"')).toHaveProperty('value', 'ab"cd')
     })
 })
-
 
 describe('tokens', () => {
     test('parses a token literal', () => {
         expect(parseString('some-token')).toEqual({
             type: TYPE.token,
-            value: "some-token"
+            value: 'some-token',
         })
     })
 
     test('can start a token with a -', () => {
-        expect(parseString('-some-token-')).toHaveProperty("value", "-some-token-")
-    })    
+        expect(parseString('-some-token-')).toHaveProperty(
+            'value',
+            '-some-token-',
+        )
+    })
 })
-
 
 describe('lists', () => {
     test('can recognize a list', () => {
-        expect(parseString('()')).toHaveProperty("type", TYPE.list)
-        expect(parseString('(1 2 3)')).toHaveProperty("type", TYPE.list)
-        expect(parseString('("abc" a-token 123)')).toHaveProperty("type", TYPE.list)
+        expect(parseString('()')).toHaveProperty('type', TYPE.list)
+        expect(parseString('(1 2 3)')).toHaveProperty('type', TYPE.list)
+        expect(parseString('("abc" a-token 123)')).toHaveProperty(
+            'type',
+            TYPE.list,
+        )
     })
 
     test('number at end of list', () => {
@@ -99,29 +106,31 @@ describe('lists', () => {
     })
 
     test('token at end of list', () => {
-        expect(parse('(token)')).toBe("(token)")
+        expect(parse('(token)')).toBe('(token)')
     })
 
     test('empty list', () => {
-        expect(parse("()")).toBe("()")
+        expect(parse('()')).toBe('()')
     })
-    
+
     test('simple list', () => {
-        expect(parse("(1 2 3)")).toBe("(1 2 3)")
+        expect(parse('(1 2 3)')).toBe('(1 2 3)')
     })
-    
+
     test('nested list', () => {
-        expect(parse("(1 (2 (3)))")).toBe("(1 (2 (3)))")
+        expect(parse('(1 (2 (3)))')).toBe('(1 (2 (3)))')
     })
-    
+
     test('list in first position of list', () => {
-        expect(parse("((1 2) 3)")).toBe("((1 2) 3)")
+        expect(parse('((1 2) 3)')).toBe('((1 2) 3)')
     })
-    
+
     test('lists can have any type', () => {
-        expect(parse('("abc" 123 -some-token-)')).toBe('("abc" 123 -some-token-)')
+        expect(parse('("abc" 123 -some-token-)')).toBe(
+            '("abc" 123 -some-token-)',
+        )
     })
-    
+
     test('lists ignore whitespace', () => {
         expect(parse('( 123    "abc"  token )')).toBe('(123 "abc" token)')
     })
@@ -132,15 +141,17 @@ describe('quote reader macro', () => {
         expect(parse(`'(1 2 3)`)).toBe(`(quote (1 2 3))`)
     })
 
-    test("escape quotes can be anywhere in the tree", () => {
-        expect(parse(`(something '(1 2 3))`)).toBe(`(something (quote (1 2 3)))`)
+    test('escape quotes can be anywhere in the tree', () => {
+        expect(parse(`(something '(1 2 3))`)).toBe(
+            `(something (quote (1 2 3)))`,
+        )
     })
 
-    test("escape quote works on literal types as well", () => {
+    test('escape quote works on literal types as well', () => {
         expect(parse(`(something '1 2)`)).toBe(`(something (quote 1) 2)`)
     })
 
-    test("escape on naked literals", () => {
+    test('escape on naked literals', () => {
         expect(parse(`'token`)).toBe(`(quote token)`)
         expect(parse(`'"str"`)).toBe(`(quote "str")`)
         expect(parse(`'123`)).toBe(`(quote 123)`)

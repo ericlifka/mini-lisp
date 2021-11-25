@@ -1,15 +1,18 @@
-import { assert } from "../assert";
-import { listGetAtIndex, listLength, listAllOneType } from "../types/list";
-import { booleanType, functionType, tokenType, TYPE } from "../types/types";
+import { assert } from '../assert'
+import { listGetAtIndex, listLength, listAllOneType } from '../types/list'
+import { booleanType, functionType, tokenType, TYPE } from '../types/types'
 
 export function validateParams(paramList, str) {
     assert(listLength(paramList) === 2, `${str} takes exactly 2 arguments`)
-    assert(listAllOneType(paramList, TYPE.number), `${str} only accepts number arguments`)
+    assert(
+        listAllOneType(paramList, TYPE.number),
+        `${str} only accepts number arguments`,
+    )
 }
 
 export function greaterThan(paramList) {
     validateParams(paramList, '>')
-    
+
     let first = listGetAtIndex(paramList, 0)
     let second = listGetAtIndex(paramList, 1)
 
@@ -18,7 +21,7 @@ export function greaterThan(paramList) {
 
 export function greaterThanOrEqualTo(paramList) {
     validateParams(paramList, '>=')
-    
+
     let first = listGetAtIndex(paramList, 0)
     let second = listGetAtIndex(paramList, 1)
 
@@ -27,7 +30,7 @@ export function greaterThanOrEqualTo(paramList) {
 
 export function lessThan(paramList) {
     validateParams(paramList, '<')
-    
+
     let first = listGetAtIndex(paramList, 0)
     let second = listGetAtIndex(paramList, 1)
 
@@ -36,7 +39,7 @@ export function lessThan(paramList) {
 
 export function lessThanOrEqualTo(paramList) {
     validateParams(paramList, '<=')
-    
+
     let first = listGetAtIndex(paramList, 0)
     let second = listGetAtIndex(paramList, 1)
 

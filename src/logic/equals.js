@@ -1,9 +1,8 @@
-import { booleanType, functionType, tokenType, TYPE } from "../types/types";
-import { listGetAtIndex, listLength } from "../types/list"
-import { assert } from "../assert";
+import { booleanType, functionType, tokenType, TYPE } from '../types/types'
+import { listGetAtIndex, listLength } from '../types/list'
+import { assert } from '../assert'
 
 function listEquals(list1, list2) {
-
     let count1 = listLength(list1)
     let count2 = listLength(list2)
     if (count1 !== count2) {
@@ -53,15 +52,17 @@ export function deepEquals(arg1, arg2) {
 }
 
 function equalsForm(params) {
-    assert(listLength(params) === 2, `equals can only be invoked on 2 parameters`)
+    assert(
+        listLength(params) === 2,
+        `equals can only be invoked on 2 parameters`,
+    )
 
     return booleanType(
-                deepEquals(
-                    listGetAtIndex(params, 0),
-                    listGetAtIndex(params, 1)))
+        deepEquals(listGetAtIndex(params, 0), listGetAtIndex(params, 1)),
+    )
 }
 
 export default [
-    [ tokenType('equal'), functionType(`(equal arg1 arg2)`, equalsForm) ],
-    [ tokenType('=='), functionType(`(== arg1 arg2)`, equalsForm) ],
+    [tokenType('equal'), functionType(`(equal arg1 arg2)`, equalsForm)],
+    [tokenType('=='), functionType(`(== arg1 arg2)`, equalsForm)],
 ]

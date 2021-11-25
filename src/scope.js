@@ -1,6 +1,6 @@
-import { TYPE } from "./types/types"
-import { assert } from "./assert"
-import builtIns from "./language-forms"
+import { TYPE } from './types/types'
+import { assert } from './assert'
+import builtIns from './language-forms'
 
 const __LANGUAGE_SCOPE__ = createScope(builtIns)
 const __GLOBAL_SCOPE__ = createScope([], __LANGUAGE_SCOPE__)
@@ -11,43 +11,57 @@ export function getGlobalScope() {
 
 export function createScope(declaredSymbols, parent = getGlobalScope()) {
     let scope = {
-        parent, 
-        tokens: { }
+        parent,
+        tokens: {},
     }
 
     declaredSymbols.forEach(([symbol, value]) => {
-        assert(TYPE.token === symbol.type,
-            `Type error: Cannot only declare tokens as scoped values, tried to declare ${symbol}`)
+        assert(
+            TYPE.token === symbol.type,
+            `Type error: Cannot only declare tokens as scoped values, tried to declare ${symbol}`,
+        )
 
-        scope.tokens[ symbol.value ] = value
+        scope.tokens[symbol.value] = value
     })
 
     return scope
 }
 
 export function lookupOnScope(scope, symbol) {
-    assert(TYPE.token === symbol.type, `Type error: type ${symbol.type} can not be retrieved from scope`)
-    
-    return scope.tokens[ symbol.value ]
+    assert(
+        TYPE.token === symbol.type,
+        `Type error: type ${symbol.type} can not be retrieved from scope`,
+    )
+
+    return scope.tokens[symbol.value]
 }
 
 export function lookupOnScopeChain(scopeChain, symbol) {
-    assert(TYPE.token === symbol.type, `Type error: type ${symbol.type} can not be retrieved from scope`)
+    assert(
+        TYPE.token === symbol.type,
+        `Type error: type ${symbol.type} can not be retrieved from scope`,
+    )
 
     let scope = scopeChain
     while (scope) {
         if (symbol.value in scope.tokens) {
-            return scope.tokens[ symbol.value ]
+            return scope.tokens[symbol.value]
         }
 
         scope = scope.parent
     }
 
-    assert(false, `Undeclared variable error: token (${symbol.value}) not defined in scope`)
+    assert(
+        false,
+        `Undeclared variable error: token (${symbol.value}) not defined in scope`,
+    )
 }
 
 export function findDeclaredInScope(scopeChain, symbol) {
-    assert(TYPE.token === symbol.type, `Type error: type ${symbol.type} can not be retrieved from scope`)
+    assert(
+        TYPE.token === symbol.type,
+        `Type error: type ${symbol.type} can not be retrieved from scope`,
+    )
 
     let scope = scopeChain
     while (scope) {
@@ -62,7 +76,10 @@ export function findDeclaredInScope(scopeChain, symbol) {
 }
 
 export function setOnScope(scope, symbol, value) {
-    assert(TYPE.token === symbol.type, `Type error: type ${symbol.type} can not be set on scope`)
-    
-    scope.tokens[ symbol.value ] = value
+    assert(
+        TYPE.token === symbol.type,
+        `Type error: type ${symbol.type} can not be set on scope`,
+    )
+
+    scope.tokens[symbol.value] = value
 }

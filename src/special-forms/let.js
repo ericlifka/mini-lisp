@@ -1,13 +1,8 @@
-import { assert } from "../assert"
-import { runCode } from "../eval"
-import { createScope, setOnScope } from "../scope"
-import { listGetAtIndex, listLength } from "../types/list"
-import { 
-    tokenType,
-    specialFormType,
-    nullType,
-    TYPE
-} from "../types/types"
+import { assert } from '../assert'
+import { runCode } from '../eval'
+import { createScope, setOnScope } from '../scope'
+import { listGetAtIndex, listLength } from '../types/list'
+import { tokenType, specialFormType, nullType, TYPE } from '../types/types'
 
 export function letForm(argList, scope) {
     let result = nullType()
@@ -18,9 +13,11 @@ export function letForm(argList, scope) {
 
     let tokens = argList.head.value
     let body = argList.head.next
-    assert(tokens.type === TYPE.list, 
-        `Malformed code error: First argument to let must be a list of token and value pairs`)
-    
+    assert(
+        tokens.type === TYPE.list,
+        `Malformed code error: First argument to let must be a list of token and value pairs`,
+    )
+
     let tokenCount = listLength(tokens)
     let letScope = createScope([], scope)
 
@@ -28,7 +25,7 @@ export function letForm(argList, scope) {
         let token = listGetAtIndex(tokens, index)
         let expr = listGetAtIndex(tokens, index + 1)
         let value = runCode(expr, letScope)
-    
+
         setOnScope(letScope, token, value)
     }
 
@@ -41,4 +38,7 @@ export function letForm(argList, scope) {
     return result
 }
 
-export default [tokenType('let'), specialFormType('<let special form>', letForm)]
+export default [
+    tokenType('let'),
+    specialFormType('<let special form>', letForm),
+]

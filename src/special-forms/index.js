@@ -5,11 +5,4 @@ import setForm from './set'
 import updateForm from './update'
 import quoteForm from './quote'
 
-export default [
-    fnForm,
-    ifForm,
-    letForm,
-    setForm,
-    updateForm,
-    quoteForm,
-]
+export default [fnForm, ifForm, letForm, setForm, updateForm, quoteForm]

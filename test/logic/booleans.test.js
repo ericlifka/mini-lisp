@@ -1,4 +1,4 @@
-import { run } from "../test-run-helper";
+import { run } from '../test-run-helper'
 
 describe('logic helpers for booleans', () => {
     test('(bool expr) determines if something is truthy', () => {

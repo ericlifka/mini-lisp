@@ -1,5 +1,5 @@
 export function assert(boolean, message) {
     if (!boolean) {
-        throw new Error(message);
+        throw new Error(message)
     }
 }
