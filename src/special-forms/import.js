@@ -9,7 +9,7 @@ function importForm(argList, scope) {
         let entity = argPtr.value
         let module, name
 
-        if (module.type === TYPE.list) {
+        if (entity.type === TYPE.list) {
             module = listGetAtIndex(entity, 0)
             let name1 = listGetAtIndex(entity, 1)
             let name2 = listGetAtIndex(entity, 2)

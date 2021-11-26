@@ -3,19 +3,13 @@ import { parseString } from '../../src/parser'
 import { TYPE } from '../../src/types/types'
 import { run } from '../test-run-helper'
 
-describe.only('(fn ...)', () => {
+describe('(fn ...)', () => {
     test('fn creates a function type', () => {
-        expect(runCode(parseString('(fn () 3)'))).toHaveProperty(
-            'type',
-            TYPE.function,
-        )
+        expect(runCode(parseString('(fn () 3)'))).toHaveProperty('type', TYPE.function)
     })
 
     test('fn can be provided a name token', () => {
-        expect(runCode(parseString('(fn my-name () 3)'))).toHaveProperty(
-            'type',
-            TYPE.function,
-        )
+        expect(runCode(parseString('(fn my-name () 3)'))).toHaveProperty('type', TYPE.function)
     })
 
     test('fn type call be called', () => {
@@ -31,7 +25,7 @@ describe.only('(fn ...)', () => {
             run(`
         (let (add (fn (x) (+ 1 x)))
           (add 3))
-        `),
+        `)
         ).toBe('4')
     })
 
@@ -43,7 +37,7 @@ describe.only('(fn ...)', () => {
                          (recur (+ 1 x))
                          10)))
           (to-ten 1))
-        `),
+        `)
         ).toBe('10')
     })
 
@@ -55,7 +49,7 @@ describe.only('(fn ...)', () => {
                      (x2 (+ 1 x)) 
                      10)))
           (x1 1))
-        `),
+        `)
         ).toBe('10')
     })
 
@@ -64,7 +58,7 @@ describe.only('(fn ...)', () => {
             run(`
         (let (my-fn (fn (first ...rest) rest))
           (my-fn 1 2 3 4))
-        `),
+        `)
         ).toBe('(2 3 4)')
     })
 
@@ -73,7 +67,7 @@ describe.only('(fn ...)', () => {
             run(`
         (let (my-fn (fn (first) first))
           (my-fn 10 20))
-        `),
+        `)
         ).toBe('10')
     })
 
@@ -82,7 +76,7 @@ describe.only('(fn ...)', () => {
             run(`
         (let (my-fn (fn (first second third) third))
           (my-fn 1))
-        `),
+        `)
         ).toBe('null')
     })
 
@@ -91,7 +85,28 @@ describe.only('(fn ...)', () => {
             run(`
         (let (my-fn (fn (first ...rest) rest))
           (my-fn 1))
-        `),
+        `)
         ).toBe('()')
+    })
+})
+
+describe('(function ...)', () => {
+    test('puts the function on the current scope', () => {
+        expect(
+            run(`
+        (let ()
+          (function get-one () 1)
+          (get-one))
+        `)
+        ).toBe('1')
+    })
+    test('creates functions in a way that they can recur', () => {
+        expect(
+            run(`
+        (let ()
+          (function my-fn (x)
+            (if (> x 10) x (my-fn (+ 1 x))))
+          (my-fn 1))`)
+        ).toBe('11')
     })
 })
