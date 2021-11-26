@@ -5,25 +5,25 @@ import { createScope } from '../scope'
 import { listAllOneType, promoteConsToList, cons, first, rest, toList } from '../types/list'
 import { tokenType, specialFormType, functionType, nullType, listType, TYPE, macroType } from '../types/types'
 
-export function fnSpecialForm(argsList, creationScope) {
+export const runnable = (runnableType) => (argsList, creationScope) => {
     let name = null
     let first = argsList.head
     if (TYPE.token === first.value.type) {
         name = first.value
         first = first.next
     }
-    assert(TYPE.list === first.value.type, `<fn special form: must provide parameter list>`)
+    assert(TYPE.list === first.value.type, `<runnable: must provide parameter list>`)
 
     let parameterList = first.value
     let bodyPtr = first.next
-    assert(listAllOneType(parameterList, TYPE.token), `<fn special form: only tokens can be provided as parameters>`)
+    assert(listAllOneType(parameterList, TYPE.token), `<runnable: only tokens can be provided as parameters>`)
 
-    let functionEntity = functionType(
-        `(fn:${name ? name.value : 'anonymous'} ${printToString(parameterList)} ...)`,
+    let runnableEntity = runnableType(
+        `(${name ? name.value : 'anonymous'} ${printToString(parameterList)} ...)`,
         (params) => {
-            let scopeParams = [[tokenType('recur'), functionEntity]]
+            let scopeParams = [[tokenType('recur'), runnableEntity]]
             if (name && name.value !== 'recur') {
-                scopeParams.push([name, functionEntity])
+                scopeParams.push([name, runnableEntity])
             }
 
             let tokensPtr = parameterList.head
@@ -36,7 +36,7 @@ export function fnSpecialForm(argsList, creationScope) {
                     // this is a rest param
                     assert(
                         tokensPtr.next.type === TYPE.null,
-                        `<fn special form: ...spread parameter can only be at end of parameters list`
+                        `<runnable: ...spread parameter can only be at end of parameters list`
                     )
 
                     currentToken = tokenType(currentToken.value.slice(3))
@@ -69,23 +69,29 @@ export function fnSpecialForm(argsList, creationScope) {
         }
     )
 
-    return functionEntity
+    return runnableEntity
 }
 
-export function functionMacro(argList, scope) {
-    /*Converts: (function my-fn (...args)
-     *            ...body)
+export const runnableShorthandMacro = (type) => (argList) => {
+    /*Converts: (function my-fn (...args) ...body)
      * to:      (set my-fn (fn (...args) ...body))
+     *
+     * Converts: (defmacro my-macro (...args) ...body)
+     * to:      (set my-macro (macro (...args) ...body))
      */
-    let fnName = first(argList)
-    let fnBody = rest(argList)
+    let nameToken = first(argList)
+    let bodyList = rest(argList)
 
-    let fn = cons(tokenType('fn'), fnBody)
+    assert(nameToken.type === TYPE.token, `First param to a runnable macro must be a name token`)
 
-    return toList(tokenType('set'), fnName, fn)
+    let runnable = cons(tokenType(type), bodyList)
+
+    return toList(tokenType('set'), nameToken, runnable)
 }
 
 export default [
-    [tokenType('fn'), specialFormType('<fn special form>', fnSpecialForm)],
-    [tokenType('function'), macroType('<function macro>', functionMacro)],
+    [tokenType('fn'), specialFormType('<fn special form>', runnable(functionType))],
+    [tokenType('macro'), specialFormType('<macro special form>', runnable(macroType))],
+    [tokenType('function'), macroType('<function macro>', runnableShorthandMacro('fn'))],
+    [tokenType('defmacro'), macroType('<defmacro macro>', runnableShorthandMacro('macro'))],
 ]
