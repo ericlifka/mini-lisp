@@ -5,10 +5,7 @@ import { mapList, promoteConsToList } from './types/list'
 import { TYPE } from './types/types'
 
 export function runCode(code, scope = getGlobalScope()) {
-    assert(
-        code && code.type,
-        `Unrecognized entity error: can not evaluate entity ${code}`,
-    )
+    assert(code && code.type, `Unrecognized entity error: can not evaluate entity ${code}`)
 
     switch (code.type) {
         case TYPE.string:
@@ -47,11 +44,9 @@ function runList(list, scope) {
 
     assert(
         run,
-        `Invalid Function error: list ${printToString(
-            list,
-        )} cannot be executed because ${printToString(
-            first,
-        )} is not a function, macro, or special form`,
+        `Invalid Function error: list ${printToString(list)} cannot be executed because ${printToString(
+            first
+        )} is not a function, macro, or special form`
     )
 
     return run(executor, rest, scope)

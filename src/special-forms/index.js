@@ -1,8 +1,10 @@
-import fnForm from './function'
+import fnForms from './function'
 import ifForm from './if'
 import letForm from './let'
 import setForm from './set'
 import updateForm from './update'
 import quoteForm from './quote'
+import moduleForm from './module'
+import importForm from './import'
 
-export default [fnForm, ifForm, letForm, setForm, updateForm, quoteForm]
+export default [...fnForms, ifForm, letForm, setForm, updateForm, quoteForm, moduleForm, importForm]

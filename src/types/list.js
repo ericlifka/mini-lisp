@@ -1,4 +1,43 @@
+import { assert } from '../assert'
 import { TYPE, consType, listType, nullType } from './types'
+
+export function first(list) {
+    assert(list.type === TYPE.list, `<fn first> expected list, recieved ${list.type}`)
+    if (list.head.type === TYPE.null) {
+        return nullType()
+    } else {
+        return list.head.value
+    }
+}
+
+export function rest(list) {
+    assert(list.type === TYPE.list, `<fn rest> expected list, recieved ${list.type}`)
+    if (list.head.type === TYPE.null) {
+        return nullType()
+    } else {
+        return promoteConsToList(list.head.next)
+    }
+}
+
+export function cons(entity, other = nullType()) {
+    if (other.type === TYPE.null) {
+        let cell = consType(entity)
+        return promoteConsToList(cell)
+    } else if (other.type === TYPE.list) {
+        let cell = consType(entity, other.head)
+        return promoteConsToList(cell)
+    } else {
+        return consType(entity, other)
+    }
+}
+
+export function toList(...args) {
+    let consPtr = nullType()
+    for (let i = args.length - 1; i >= 0; i--) {
+        consPtr = consType(args[i], consPtr)
+    }
+    return promoteConsToList(consPtr)
+}
 
 export function addToList(list, value) {
     // WARNING: must only ever be used on a list being constructed, either by the parser or by a function creating a new list copy
@@ -26,13 +65,13 @@ export function promoteConsToList(cons) {
     let newList = listType()
     if (cons.type === TYPE.null) return newList
 
-    let ptr = cons
-    while (ptr.next.type !== TYPE.null) {
-        ptr = ptr.next
-    }
+    // let ptr = cons
+    // while (ptr.next.type !== TYPE.null) {
+    //     ptr = ptr.next
+    // }
 
     newList.head = cons
-    newList.last = ptr
+    // newList.last = ptr
 
     return newList
 }
