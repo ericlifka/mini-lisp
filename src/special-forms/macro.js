@@ -5,25 +5,26 @@ import { createScope } from '../scope'
 import { listAllOneType, promoteConsToList, cons, first, rest, toList } from '../types/list'
 import { tokenType, specialFormType, functionType, nullType, listType, TYPE, macroType } from '../types/types'
 
-export function fnSpecialForm(argsList, creationScope) {
+// TODO should really share code with function.js since these do the same exact thing
+function macroSpecialForm(argsList, creationScope) {
     let name = null
     let first = argsList.head
     if (TYPE.token === first.value.type) {
         name = first.value
         first = first.next
     }
-    assert(TYPE.list === first.value.type, `<fn special form: must provide parameter list>`)
+    assert(TYPE.list === first.value.type, `<macro special form: must provide parameter list>`)
 
     let parameterList = first.value
     let bodyPtr = first.next
-    assert(listAllOneType(parameterList, TYPE.token), `<fn special form: only tokens can be provided as parameters>`)
+    assert(listAllOneType(parameterList, TYPE.token), `<macro special form: only tokens can be provided as parameters>`)
 
-    let functionEntity = functionType(
-        `(fn:${name ? name.value : 'anonymous'} ${printToString(parameterList)} ...)`,
+    let macroEntity = macroType(
+        `(macro:${name ? name.value : 'anonymous'} ${printToString(parameterList)} ...)`,
         (params) => {
-            let scopeParams = [[tokenType('recur'), functionEntity]]
+            let scopeParams = [[tokenType('recur'), macroEntity]]
             if (name && name.value !== 'recur') {
-                scopeParams.push([name, functionEntity])
+                scopeParams.push([name, macroEntity])
             }
 
             let tokensPtr = parameterList.head
@@ -36,7 +37,7 @@ export function fnSpecialForm(argsList, creationScope) {
                     // this is a rest param
                     assert(
                         tokensPtr.next.type === TYPE.null,
-                        `<fn special form: ...spread parameter can only be at end of parameters list`
+                        `<macro special form: ...spread parameter can only be at end of parameters list`
                     )
 
                     currentToken = tokenType(currentToken.value.slice(3))
@@ -55,12 +56,12 @@ export function fnSpecialForm(argsList, creationScope) {
                 }
             }
 
-            let functionScope = createScope(scopeParams, creationScope)
+            let macroScope = createScope(scopeParams, creationScope)
             let body = bodyPtr
             let evalResult
 
             while (body.type !== TYPE.null) {
-                evalResult = runCode(body.value, functionScope)
+                evalResult = runCode(body.value, macroScope)
 
                 body = body.next
             }
@@ -69,23 +70,23 @@ export function fnSpecialForm(argsList, creationScope) {
         }
     )
 
-    return functionEntity
+    return macroEntity
 }
 
-export function functionMacro(argList, scope) {
-    /*Converts: (function my-fn (...args)
+function defMacroMacro(argList, scope) {
+    /*Converts: (defmacro my-macro (...args)
      *            ...body)
-     * to:      (set my-fn (fn (...args) ...body))
+     * to:      (set my-macro (macro (...args) ...body))
      */
-    let fnName = first(argList)
-    let fnBody = rest(argList)
+    let macroName = first(argList)
+    let macroBody = rest(argList)
 
-    let fn = cons(tokenType('fn'), fnBody)
+    let macro = cons(tokenType('macro'), macroBody)
 
-    return toList(tokenType('set'), fnName, fn)
+    return toList(tokenType('set'), macroName, macro)
 }
 
 export default [
-    [tokenType('fn'), specialFormType('<fn special form>', fnSpecialForm)],
-    [tokenType('function'), macroType('<function macro>', functionMacro)],
+    [tokenType('macro'), specialFormType('<macro special form>', macroSpecialForm)],
+    [tokenType('defmacro'), macroType('<defmacro macro>', defMacroMacro)],
 ]

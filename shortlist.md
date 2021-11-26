@@ -1,11 +1,10 @@
-defn
 defmacro
 comments
-modules
 list functions
+backtick and untick reader macros
 
-better repl
 loading and running of files
+refactor parser to incremental parsing to allow repl to take multiple lines
 
 loading stdlib functions in mlisp
 
