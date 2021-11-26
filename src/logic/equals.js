@@ -30,7 +30,7 @@ export function deepEquals(arg1, arg2) {
 
     switch (arg1.type) {
         case TYPE.cons:
-            return arg1 === arg2
+            return deepEquals(arg1.value, arg2.value) && deepEquals(arg1.next, arg2.next)
 
         case TYPE.list:
             return listEquals(arg1, arg2)
@@ -52,14 +52,9 @@ export function deepEquals(arg1, arg2) {
 }
 
 function equalsForm(params) {
-    assert(
-        listLength(params) === 2,
-        `equals can only be invoked on 2 parameters`,
-    )
+    assert(listLength(params) === 2, `equals can only be invoked on 2 parameters`)
 
-    return booleanType(
-        deepEquals(listGetAtIndex(params, 0), listGetAtIndex(params, 1)),
-    )
+    return booleanType(deepEquals(listGetAtIndex(params, 0), listGetAtIndex(params, 1)))
 }
 
 export default [

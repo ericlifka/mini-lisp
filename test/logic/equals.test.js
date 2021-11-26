@@ -1,5 +1,5 @@
 import { deepEquals } from '../../src/logic/equals'
-import { consType } from '../../src/types/types'
+import { consType, numberType, tokenType } from '../../src/types/types'
 import { run } from '../test-run-helper'
 
 describe('equals fn', () => {
@@ -38,9 +38,14 @@ describe('equals fn', () => {
         expect(run(`(equal function function)`)).toBe('true')
         expect(run(`(equal function fn)`)).toBe('false')
     })
-    test('cons is special for now', () => {
-        expect(deepEquals(consType(), consType())).toBe(false)
+    test('cons compares the values of its children', () => {
+        expect(deepEquals(consType(), consType())).toBe(true)
         let c = consType()
         expect(deepEquals(c, c)).toBe(true)
+        expect(deepEquals(consType(numberType(1)), consType(numberType(1)))).toBe(true)
+        expect(deepEquals(consType(numberType(1), tokenType('abc')), consType(numberType(1), tokenType('abc')))).toBe(
+            true
+        )
+        expect(deepEquals(consType(numberType(1)), consType(numberType(2)))).toBe(false)
     })
 })
