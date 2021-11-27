@@ -1,5 +1,4 @@
 comments
-list functions
 backtick and untick reader macros
 
 loading and running of files
