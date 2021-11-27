@@ -1,19 +1,19 @@
-import { run } from './test-run-helper'
+import { resetModules, run } from './test-run-helper'
 
 describe('module systems', () => {
-    test('dummy', () => {
-        expect(true).toBe(true)
+    afterEach(() => {
+        resetModules()
     })
 
     test('can create and access a simple module', () => {
         expect(
             run(`
         (let ()
-          (module 'module1
+          (module 'module
             (function get-five () 5))
 
-          (import module1)
-          (module1/get-five))`)
+          (import module)
+          (module/get-five))`)
         ).toBe('5')
     })
 
@@ -21,10 +21,10 @@ describe('module systems', () => {
         expect(
             run(`
         (let ()
-          (module 'module2
+          (module 'module
             (function get-five () 5))
 
-          (import (module2 :as mod))
+          (import (module :as mod))
           (mod/get-five))`)
         ).toBe('5')
     })
@@ -33,11 +33,11 @@ describe('module systems', () => {
         expect(
             run(`
         (let (x 2)
-          (module 'module3
+          (module 'module
             (function get-x () x))
           
-          (import module3)
-          (module3/get-x))`)
+          (import module)
+          (module/get-x))`)
         ).toBe('2')
     })
 
@@ -49,25 +49,25 @@ describe('module systems', () => {
         expect(() =>
             run(`
         (let () 
-          (module 'module4
+          (module 'module
             (function get-3 () 3))
 
-          (module4/get-3)
+          (module/get-3)
         )`)
-        ).toThrow(`Lexical error: module4 not imported in this scope`)
+        ).toThrow(`Lexical error: module not imported in this scope`)
     })
 
     test('module import can be found up scope chain', () => {
         expect(
             run(`
         (let ()
-          (module 'module5
+          (module 'module
             (function get-3 () 3))
           
-          (import module5)
+          (import module)
           (let ()
             (let ()
-              (module5/get-3))))
+              (module/get-3))))
         `)
         ).toBe('3')
     })
@@ -76,14 +76,14 @@ describe('module systems', () => {
         expect(
             run(`
         (let ()
-          (module 'module6
+          (module 'module-1
             (function get-3 () 3))
-          (module 'module7
+          (module 'module-2
             (function get-4 () 4))
 
-          (import module6
-                 (module7 :as m7))
-          (+ (module6/get-3) (m7/get-4)))
+          (import module-1
+                 (module-2 :as m2))
+          (+ (module-1/get-3) (m2/get-4)))
         `)
         ).toBe('7')
     })
@@ -92,16 +92,16 @@ describe('module systems', () => {
         expect(
             run(`
         (let ()
-          (module 'module8
+          (module 'module
             (function add-3 (x) (+ 3 x)))
 
-          (module 'module9
-            (import module8)
+          (module 'other-module
+            (import module)
             (function add-6 (x)
-              (module8/add-3 (module8/add-3 x))))
+              (module/add-3 (module/add-3 x))))
 
-          (import module9)
-          (module9/add-6 7))
+          (import other-module)
+          (other-module/add-6 7))
         `)
         ).toBe('13')
     })
