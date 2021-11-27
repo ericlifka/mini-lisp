@@ -80,10 +80,7 @@ describe('tokens', () => {
     })
 
     test('can start a token with a -', () => {
-        expect(parseString('-some-token-')).toHaveProperty(
-            'value',
-            '-some-token-',
-        )
+        expect(parseString('-some-token-')).toHaveProperty('value', '-some-token-')
     })
 })
 
@@ -91,10 +88,7 @@ describe('lists', () => {
     test('can recognize a list', () => {
         expect(parseString('()')).toHaveProperty('type', TYPE.list)
         expect(parseString('(1 2 3)')).toHaveProperty('type', TYPE.list)
-        expect(parseString('("abc" a-token 123)')).toHaveProperty(
-            'type',
-            TYPE.list,
-        )
+        expect(parseString('("abc" a-token 123)')).toHaveProperty('type', TYPE.list)
     })
 
     test('number at end of list', () => {
@@ -126,9 +120,7 @@ describe('lists', () => {
     })
 
     test('lists can have any type', () => {
-        expect(parse('("abc" 123 -some-token-)')).toBe(
-            '("abc" 123 -some-token-)',
-        )
+        expect(parse('("abc" 123 -some-token-)')).toBe('("abc" 123 -some-token-)')
     })
 
     test('lists ignore whitespace', () => {
@@ -142,9 +134,7 @@ describe('quote reader macro', () => {
     })
 
     test('escape quotes can be anywhere in the tree', () => {
-        expect(parse(`(something '(1 2 3))`)).toBe(
-            `(something (quote (1 2 3)))`,
-        )
+        expect(parse(`(something '(1 2 3))`)).toBe(`(something (quote (1 2 3)))`)
     })
 
     test('escape quote works on literal types as well', () => {

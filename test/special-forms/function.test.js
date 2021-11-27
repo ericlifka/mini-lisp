@@ -12,7 +12,7 @@ describe('(fn ...)', () => {
         expect(runCode(parseString('(fn my-name () 3)'))).toHaveProperty('type', TYPE.function)
     })
 
-    test('fn type call be called', () => {
+    test('fn type can be called', () => {
         expect(run('((fn () 3))')).toBe('3')
     })
 
