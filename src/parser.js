@@ -61,12 +61,12 @@ const checkForConversions = (token) => {
         } else if (token.value === 'true' || token.value === 'false') {
             token.value = token.value === 'true'
             token.type = TYPE.boolean
+        } else if (token.value === 'null') {
+            token.type = TYPE.null
+            delete token.value
         }
     }
-    // else if (token.value === 'null') {
-    //     token.type = TYPE.null
-    //     delete token.value
-    // }
+
     return token
 }
 

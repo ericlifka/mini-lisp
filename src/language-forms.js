@@ -5,7 +5,6 @@ import logicForms from './logic'
 import listForms from './lists'
 
 export default [
-    [tokenType('null'), nullType()],
     [tokenType('modules'), {}], // this should be a hashmap type once that's supported
 
     ...specialForms,
