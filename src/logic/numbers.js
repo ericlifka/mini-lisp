@@ -3,11 +3,9 @@ import { listGetAtIndex, listAllOneType, listLength, promoteConsToList, first, r
 import { booleanType, tokenType, functionType, macroType, consType as cons, numberType, TYPE } from '../types/types'
 
 function mathComparison(params, comparitor) {
-    assert(listLength(params) === 2, `Comparison functions take exactly 2 arguments`)
-    assert(listAllOneType(params, TYPE.number), `Comparison functions only work on numbers`)
-
     let first = listGetAtIndex(params, 0)
     let second = listGetAtIndex(params, 1)
+    assert(first.type === TYPE.number && second.type === TYPE.number, `Comparison functions require two numbers`)
 
     return booleanType(comparitor(first.value, second.value))
 }
@@ -43,6 +41,25 @@ export default [
             let one = numberType(1)
 
             return promoteConsToList(cons(plus, cons(one, argsList.head)))
+        }),
+    ],
+    [
+        tokenType('sqrt'),
+        functionType('(sqrt number)', (params) => {
+            let number = listGetAtIndex(params, 0)
+            assert(number.type === TYPE.number, `sqrt only works on numbers`)
+
+            return numberType(Math.sqrt(number.value))
+        }),
+    ],
+    [
+        tokenType('%'),
+        functionType('(% num1 num2)', (params) => {
+            let first = listGetAtIndex(params, 0)
+            let second = listGetAtIndex(params, 1)
+            assert(first.type === TYPE.number && second.type === TYPE.number, `% requires two numbers`)
+
+            return numberType(first.value % second.value)
         }),
     ],
 ]

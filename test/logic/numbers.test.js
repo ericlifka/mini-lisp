@@ -5,13 +5,11 @@ import { run } from '../test-run-helper'
 
 describe('logical operands for numbers', () => {
     test('> throws on invalid input', () => {
-        expect(() => run('(>)')).toThrow(`Comparison functions take exactly 2 arguments`)
-        expect(() => run('(> 1)')).toThrow(`Comparison functions take exactly 2 arguments`)
-        expect(() => run('(> 1 2 3)')).toThrow(`Comparison functions take exactly 2 arguments`)
-        expect(() => run(`(> 'abc 'def)`)).toThrow(`Comparison functions only work on numbers`)
-        expect(() => run(`(> 1 '(2))`)).toThrow(`Comparison functions only work on numbers`)
-        expect(() => run('(> 1 null)')).toThrow(`Comparison functions only work on numbers`)
-        expect(() => run('(> 1 "2")')).toThrow(`Comparison functions only work on numbers`)
+        expect(() => run('(>)')).toThrow(`Comparison functions require two numbers`)
+        expect(() => run(`(> 'abc 'def)`)).toThrow(`Comparison functions require two numbers`)
+        expect(() => run(`(> 1 '(2))`)).toThrow(`Comparison functions require two numbers`)
+        expect(() => run('(> 1 null)')).toThrow(`Comparison functions require two numbers`)
+        expect(() => run('(> 1 "2")')).toThrow(`Comparison functions require two numbers`)
     })
 
     test('> does logical comparison of numbers', () => {
@@ -63,5 +61,13 @@ describe('arithmatic functions', () => {
         expect(run(`(/ 27 3 3)`)).toBe('3')
         expect(run(`(/ 9 3)`)).toBe('3')
         expect(run(`(/ 5)`)).toBe('5')
+    })
+    test('sqrt', () => {
+        expect(run(`(sqrt 4)`)).toBe('2')
+        expect(() => run(`(sqrt 'abc)`)).toThrow('sqrt only works on numbers')
+    })
+    test('%', () => {
+        expect(run(`(% 4 2)`)).toBe('0')
+        expect(() => run(`(% 3 'abc)`)).toThrow(`% requires two numbers`)
     })
 })
