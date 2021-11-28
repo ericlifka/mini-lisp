@@ -5,44 +5,44 @@ import { run } from '../test-run-helper'
 
 describe('logical operands for numbers', () => {
     test('> throws on invalid input', () => {
-        expect(() => validateParams(parseString('()'), '>')).toThrow(`> takes exactly 2 arguments`)
-        expect(() => validateParams(parseString('(1)'), '>')).toThrow(`> takes exactly 2 arguments`)
-        expect(() => validateParams(parseString('(1 2 3)'), '>')).toThrow(`> takes exactly 2 arguments`)
-        expect(() => validateParams(parseString('(abc def)'), '>')).toThrow(`> only accepts number arguments`)
-        expect(() => validateParams(parseString('(1 (2))'), '>')).toThrow(`> only accepts number arguments`)
-        expect(() => validateParams(parseString('(1 null)'), '>')).toThrow(`> only accepts number arguments`)
-        expect(() => validateParams(parseString('(1 "2")'), '>')).toThrow(`> only accepts number arguments`)
+        expect(() => run('(>)')).toThrow(`Comparison functions take exactly 2 arguments`)
+        expect(() => run('(> 1)')).toThrow(`Comparison functions take exactly 2 arguments`)
+        expect(() => run('(> 1 2 3)')).toThrow(`Comparison functions take exactly 2 arguments`)
+        expect(() => run(`(> 'abc 'def)`)).toThrow(`Comparison functions only work on numbers`)
+        expect(() => run(`(> 1 '(2))`)).toThrow(`Comparison functions only work on numbers`)
+        expect(() => run('(> 1 null)')).toThrow(`Comparison functions only work on numbers`)
+        expect(() => run('(> 1 "2")')).toThrow(`Comparison functions only work on numbers`)
     })
 
     test('> does logical comparison of numbers', () => {
-        expect(greaterThan(parseString('(2 1)'))).toHaveProperty('value', true)
-        expect(greaterThan(parseString('(2 3)'))).toHaveProperty('value', false)
-        expect(greaterThan(parseString('(2 2)'))).toHaveProperty('value', false)
+        expect(run('(> 2 1)')).toBe('true')
+        expect(run('(> 2 3)')).toBe('false')
+        expect(run('(> 2 2)')).toBe('false')
     })
 
     test('>= does logical comparison of numbers', () => {
-        expect(greaterThanOrEqualTo(parseString('(2 1)'))).toHaveProperty('value', true)
-        expect(greaterThanOrEqualTo(parseString('(2 3)'))).toHaveProperty('value', false)
-        expect(greaterThanOrEqualTo(parseString('(2 2)'))).toHaveProperty('value', true)
+        expect(run('(>= 2 1)')).toBe('true')
+        expect(run('(>= 2 3)')).toBe('false')
+        expect(run('(>= 2 2)')).toBe('true')
     })
 
     test('< does logical comparison of numbers', () => {
-        expect(lessThan(parseString('(2 1)'))).toHaveProperty('value', false)
-        expect(lessThan(parseString('(2 3)'))).toHaveProperty('value', true)
-        expect(lessThan(parseString('(2 2)'))).toHaveProperty('value', false)
+        expect(run('(< 2 1)')).toBe('false')
+        expect(run('(< 2 3)')).toBe('true')
+        expect(run('(< 2 2)')).toBe('false')
     })
 
     test('<= does logical comparison of numbers', () => {
-        expect(lessThanOrEqualTo(parseString('(2 1)'))).toHaveProperty('value', false)
-        expect(lessThanOrEqualTo(parseString('(2 3)'))).toHaveProperty('value', true)
-        expect(lessThanOrEqualTo(parseString('(2 2)'))).toHaveProperty('value', true)
+        expect(run('(<= 2 1)')).toBe('false')
+        expect(run('(<= 2 3)')).toBe('true')
+        expect(run('(<= 2 2)')).toBe('true')
     })
 
     test('operands are available in program scope', () => {
-        expect(runCode(parseString('(> 3 2)'))).toHaveProperty('value', true)
-        expect(runCode(parseString('(>= 3 2)'))).toHaveProperty('value', true)
-        expect(runCode(parseString('(< 3 2)'))).toHaveProperty('value', false)
-        expect(runCode(parseString('(<= 3 2)'))).toHaveProperty('value', false)
+        expect(run('(> 3 2)')).toBe('true')
+        expect(run('(>= 3 2)')).toBe('true')
+        expect(run('(< 3 2)')).toBe('false')
+        expect(run('(<= 3 2)')).toBe('false')
     })
 })
 
