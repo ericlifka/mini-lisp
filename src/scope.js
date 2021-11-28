@@ -1,4 +1,4 @@
-import { tokenType, TYPE } from './types/types'
+import { stringType, tokenType, TYPE } from './types/types'
 import { assert } from './assert'
 import builtIns from './language-forms'
 
@@ -26,6 +26,10 @@ export function createScope(declaredSymbols, parent) {
     })
 
     return scope
+}
+
+export function newFileScope(filename) {
+    return createScope([[tokenType(':file-name'), stringType(filename)]], getGlobalScope())
 }
 
 export function createModule(token, parent = getGlobalScope()) {

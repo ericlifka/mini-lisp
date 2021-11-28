@@ -2,9 +2,12 @@ import { log, printToString } from './logger'
 import { checkNeedsInput, checkExpressionReady, getExpression, newReader, stepReader } from './parser'
 import { runCode } from './eval'
 import repl from 'repl'
+import { createScope, newFileScope } from './scope'
 
 export function start() {
     log('<μlisp repl>')
+
+    let replScope = newFileScope('repl')
 
     repl.start({
         prompt: 'μ> ',
@@ -18,7 +21,7 @@ export function start() {
 
             if (checkExpressionReady(reader)) {
                 let expr = getExpression(reader)
-                let result = runCode(expr)
+                let result = runCode(expr, replScope)
                 let output = printToString(result)
 
                 return cb(null, output)

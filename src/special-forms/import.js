@@ -1,6 +1,6 @@
 import { lookupModule } from '../scope'
 import { listGetAtIndex } from '../types/list'
-import { specialFormType, tokenType, TYPE } from '../types/types'
+import { nullType, specialFormType, tokenType, TYPE } from '../types/types'
 
 function importForm(argList, scope) {
     let argPtr = argList.head
@@ -23,6 +23,8 @@ function importForm(argList, scope) {
 
         argPtr = argPtr.next
     }
+
+    return nullType()
 }
 
 export default [tokenType('import'), specialFormType('<import special form>', importForm)]
