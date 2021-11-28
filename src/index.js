@@ -1,3 +1,13 @@
-import { start } from './repl'
+import { startRepl } from './repl'
+import { runFile } from './loader'
+import { log } from './logger'
 
-start() // can determine if it's supposed to load files or start a repl or what later.
+let filename = process.argv[2]
+
+if (filename) {
+    log('\n<μlisp>\n')
+    runFile(filename)
+    log('\n')
+} else {
+    startRepl()
+}

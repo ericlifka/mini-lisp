@@ -61,6 +61,14 @@ export function mapList(list, fn) {
     return newList
 }
 
+export function listForEach(list, fn) {
+    let ptr = list.head
+    while (ptr.type !== TYPE.null) {
+        fn(ptr.value)
+        ptr = ptr.next
+    }
+}
+
 export function promoteConsToList(cons) {
     let newList = listType()
     if (cons.type === TYPE.null) return newList

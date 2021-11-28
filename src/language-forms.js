@@ -1,7 +1,8 @@
-import { tokenType, nullType } from './types/types'
+import { tokenType } from './types/types'
 import specialForms from './special-forms'
 import logicForms from './logic'
 import listForms from './lists'
+import utilityForms from './utility'
 
 export default [
     [tokenType('modules'), {}], // this should be a hashmap type once that's supported
@@ -9,4 +10,5 @@ export default [
     ...specialForms,
     ...logicForms,
     ...listForms,
+    ...utilityForms,
 ]

@@ -2,10 +2,10 @@ import { log, printToString } from './logger'
 import { checkNeedsInput, checkExpressionReady, getExpression, newReader, stepReader } from './parser'
 import { runCode } from './eval'
 import repl from 'repl'
-import { createScope, newFileScope } from './scope'
+import { newFileScope } from './scope'
 
-export function start() {
-    log('<μlisp repl>')
+export function startRepl() {
+    log('<μlisp initiating repl>')
 
     let replScope = newFileScope('repl')
 
