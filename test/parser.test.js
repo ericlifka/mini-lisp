@@ -1,5 +1,13 @@
-import { parseString } from '../src/parser'
-import { printToString } from '../src/logger'
+import { runCode } from '../src/eval'
+import {
+    addInput,
+    checkExpressionReady,
+    checkNeedsInput,
+    getExpression,
+    newReader,
+    parseString,
+    parseToNextBreak,
+} from '../src/parser'
 import { TYPE } from '../src/types/types'
 import { parse } from './test-run-helper'
 
@@ -145,5 +153,21 @@ describe('quote reader macro', () => {
         expect(parse(`'token`)).toBe(`(quote token)`)
         expect(parse(`'"str"`)).toBe(`(quote "str")`)
         expect(parse(`'123`)).toBe(`(quote 123)`)
+    })
+})
+
+describe('incremental parser', () => {
+    test('can parse statements in parts', () => {
+        let reader = newReader('(let (x 1')
+        parseToNextBreak(reader)
+        expect(checkExpressionReady(reader)).toBe(false)
+        expect(checkNeedsInput(reader)).toBe(true)
+        addInput('  y 2) (+ x y))', reader)
+        parseToNextBreak(reader)
+        expect(checkExpressionReady(reader)).toBe(true)
+        expect(checkNeedsInput(reader)).toBe(false)
+        let expr = getExpression(reader)
+        let result = runCode(expr)
+        expect(result.value).toBe(3)
     })
 })

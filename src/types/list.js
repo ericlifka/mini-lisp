@@ -65,13 +65,7 @@ export function promoteConsToList(cons) {
     let newList = listType()
     if (cons.type === TYPE.null) return newList
 
-    // let ptr = cons
-    // while (ptr.next.type !== TYPE.null) {
-    //     ptr = ptr.next
-    // }
-
     newList.head = cons
-    // newList.last = ptr
 
     return newList
 }
