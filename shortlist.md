@@ -4,7 +4,6 @@ reader improements:
     - loading and running of files
 
 language functions:
-    - math functions
     - map / reduce
 
 data types:

@@ -38,31 +38,3 @@ describe('tokens', () => {
         })
     })
 })
-
-describe('builtin functions', () => {
-    describe('+', () => {
-        test('can add numbers with +', () => {
-            expect(run('(+ 1 2)')).toBe('3')
-        })
-
-        test('can handle a single argument', () => {
-            expect(run('(+ 1)')).toBe('1')
-        })
-
-        test('rejects non numbers', () => {
-            expect(() => run('(+ 1 "abc" 2)')).toThrow()
-        })
-    })
-})
-
-describe('builtin macros', () => {
-    describe('++1', () => {
-        test('converts to + with a 1 added to the expression', () => {
-            expect(run('(++1 2)')).toBe('3')
-        })
-
-        test('macro means it can handle any number of params', () => {
-            expect(run('(++1 2 3 4)')).toBe('10')
-        })
-    })
-})
