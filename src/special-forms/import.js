@@ -1,3 +1,4 @@
+import { loadModule } from '../loader'
 import { lookupModule } from '../scope'
 import { listGetAtIndex } from '../types/list'
 import { nullType, specialFormType, tokenType, TYPE } from '../types/types'

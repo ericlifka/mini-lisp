@@ -1,6 +1,7 @@
 import { stringType, tokenType, TYPE } from './types/types'
 import { assert } from './assert'
 import builtIns from './language-forms'
+import { loadModule } from './loader'
 
 const __LANGUAGE_SCOPE__ = createScope(builtIns, null)
 const __GLOBAL_SCOPE__ = createScope([], __LANGUAGE_SCOPE__)
@@ -45,7 +46,14 @@ export function createModule(token, parent = getGlobalScope()) {
 
 export function lookupModule(token) {
     assert(token.type === TYPE.token, `Modules must be looked up by an associated symbol`)
+
     let modules = lookupOnScope(__LANGUAGE_SCOPE__, tokenType('modules'))
+
+    if (!(token.value in modules)) {
+        loadModule(token)
+
+        assert(token.value in modules, `Module loader couldn't find module ${token.value}`)
+    }
 
     return modules[token.value]
 }

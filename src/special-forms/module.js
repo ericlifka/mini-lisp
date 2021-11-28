@@ -5,7 +5,7 @@ import { tokenType, specialFormType, TYPE, nullType } from '../types/types'
 
 function moduleSpecialForm(argList, scope) {
     assert(argList.head.type === TYPE.cons, `Usage error: <module> needs at least one expression`)
-    let moduleName = runCode(argList.head.value, scope)
+    let moduleName = argList.head.value
     let module = createModule(moduleName, scope)
     let bodyPtr = argList.head.next
     let result = nullType()
