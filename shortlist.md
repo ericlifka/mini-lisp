@@ -2,7 +2,6 @@ reader improements:
     - comments
     - backtick and untick reader macros
     - loading and running of files
-    - refactor parser to incremental parsing to allow repl to take multiple lines
 
 language functions:
     - math functions
@@ -13,3 +12,4 @@ data types:
     - hashmap
 
 loading stdlib functions in mlisp
+improve repl so it can parse multiple lines

@@ -84,43 +84,19 @@ const checkForUnfinishedEscapeQuote = (cell) => {
     return cell
 }
 
-export function newReader(input) {
+export function newReader(input = '') {
     let wrapper = listType()
     return {
         input: input.split(''), // should probably handle streams and or files as well, at some point
         head: wrapper,
         current: wrapper,
         parents: [],
-        state: STATE.ready,
+        state: input === '' ? STATE.needInput : STATE.ready,
         position: 0,
         escapeFlag: false,
         quoteFlag: false,
         entitiesParsed: 0,
     }
-}
-
-export function addInput(input, reader) {
-    assert(reader.state === STATE.needInput, `Reader not finished with prior input before new input assigned`)
-
-    reader.input = input.split('')
-    reader.position = 0
-    reader.state = STATE.ready
-}
-
-export function getExpression(reader) {
-    assert(reader.state === STATE.exprReady, `Can only get expression from reader when one is ready`)
-
-    let finished = reader.head
-    reader.current = reader.head = listType()
-    reader.entitiesParsed = 0
-
-    if (reader.position >= reader.input.length) {
-        reader.state = STATE.needInput
-    } else {
-        reader.state = STATE.ready
-    }
-
-    return finished.head.value
 }
 
 export function stepReader(reader) {
@@ -173,23 +149,55 @@ export function stepReader(reader) {
         }
     }
 
-    return reader.state
+    return reader.state !== STATE.needInput && reader.state !== STATE.exprReady
+}
+
+export function checkNeedsInput(reader) {
+    return reader.state === STATE.needInput
+}
+
+export function checkExpressionReady(reader) {
+    return reader.state === STATE.exprReady
+}
+
+export function addInput(input, reader) {
+    assert(reader.state === STATE.needInput, `Reader not finished: ${reader.input.length}, ${reader.position}`)
+
+    reader.input = input.split('')
+    reader.position = 0
+    reader.state = input.length === '' ? STATE.needInput : STATE.ready
+}
+
+export function getExpression(reader) {
+    assert(reader.state === STATE.exprReady, `Can only get expression from reader when one is ready`)
+
+    let finished = reader.head
+    reader.current = reader.head = listType()
+    reader.entitiesParsed = 0
+
+    if (reader.position >= reader.input.length) {
+        reader.state = STATE.needInput
+    } else {
+        reader.state = STATE.ready
+    }
+
+    return finished.head.value
 }
 
 export function parseString(string) {
     let reader = newReader(string)
+    let shouldContinue
+    do {
+        shouldContinue = stepReader(reader)
+    } while (shouldContinue)
 
-    while (true) {
-        let state = stepReader(reader)
-
-        if (state === STATE.exprReady) {
-            let expr = getExpression(reader)
-            assert(!!expr, `parser returned undefined when an expression was expected.`)
-            return expr
-        }
-
-        assert(state !== STATE.needInput, `parseString expects whole expressions, doesn\'t support partial reads`)
+    if (checkExpressionReady(reader)) {
+        let expr = getExpression(reader)
+        assert(!!expr, `parser returned undefined when an expression was expected.`)
+        return expr
     }
+
+    assert(!checkNeedsInput(), `parseString expects whole expressions, doesn\'t support partial reads`)
 }
 
 // export function parseString(string) {

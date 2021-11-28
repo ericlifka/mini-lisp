@@ -1,19 +1,32 @@
 import { log, printToString } from './logger'
-import { parseString } from './parser'
+import { checkNeedsInput, checkExpressionReady, getExpression, newReader, stepReader } from './parser'
 import { runCode } from './eval'
 import repl from 'repl'
 
 export function start() {
-    log('<mini-lisp>')
+    log('<μlisp repl>')
 
     repl.start({
-        prompt: '> ',
-        eval: (input, context, filename, cb) => {
-            let ast = parseString(input)
-            let result = runCode(ast)
-            let stringResult = printToString(result)
+        prompt: 'μ> ',
+        eval(input, context, filename, cb) {
+            let reader = newReader(input)
 
-            cb(null, stringResult)
+            let shouldContinue
+            do {
+                shouldContinue = stepReader(reader)
+            } while (shouldContinue)
+
+            if (checkExpressionReady(reader)) {
+                let expr = getExpression(reader)
+                let result = runCode(expr)
+                let output = printToString(result)
+
+                return cb(null, output)
+            }
+
+            if (checkNeedsInput(reader)) {
+                return cb(new repl.Recoverable())
+            }
         },
     }).addListener('exit', () => log('\nterminating REPL\n'))
 }
