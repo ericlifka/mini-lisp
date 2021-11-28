@@ -8,10 +8,17 @@ const STATE = {
     exprReady: 'expr-ready',
     inString: 'in-string',
     inToken: 'in-token',
+    inComment: 'in-comment',
 }
 
 const symbolChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./_-+?<>!@#$%^&*:|'
 const syntaxCloseChars = ')'
+
+const shouldOpenComment = (ch, reader) => reader.state !== STATE.inString && ch === ';'
+const shouldCloseComment = (ch, reader) => reader.state === STATE.inComment && ch === '\n'
+
+const shouldStartQuote = (ch, reader) => reader.state === STATE.ready && ch === "'"
+const shouldStartEscape = (ch, reader) => ch === '\\' && !reader.escapeFlag
 
 const shouldOpenList = (ch, reader) => reader.state === STATE.ready && ch === '('
 const shouldCloseList = (ch, reader) => reader.state === STATE.ready && ch === ')'
@@ -106,9 +113,11 @@ export function stepReader(reader) {
 
     let ch = reader.input[reader.position]
 
-    if (ch === "'" && reader.state === STATE.ready) {
+    if (shouldOpenComment(ch, reader)) {
+        reader.state = STATE.inComment
+    } else if (shouldStartQuote(ch, reader)) {
         reader.quoteFlag = true
-    } else if (ch === '\\' && !reader.escapeFlag) {
+    } else if (shouldStartEscape(ch, reader)) {
         reader.escapeFlag = true
     } else if (shouldOpenList(ch, reader)) {
         newDataState(listType(), STATE.ready, reader)
@@ -116,6 +125,8 @@ export function stepReader(reader) {
         newDataState(stringType(), STATE.inString, reader)
     } else if (shouldOpenToken(ch, reader)) {
         newDataState(tokenType(ch, reader), STATE.inToken, reader)
+    } else if (shouldCloseComment(ch, reader)) {
+        reader.state = STATE.ready
     } else if (shouldCloseString(ch, reader)) {
         popState(reader)
     } else if (shouldCloseToken(ch, reader)) {

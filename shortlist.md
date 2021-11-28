@@ -1,5 +1,4 @@
 reader improements:
-    - comments
     - backtick and untick reader macros
     - loading and running of files
 

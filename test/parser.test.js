@@ -9,7 +9,7 @@ import {
     parseToNextBreak,
 } from '../src/parser'
 import { TYPE } from '../src/types/types'
-import { parse } from './test-run-helper'
+import { parse, run } from './test-run-helper'
 
 describe('numbers', () => {
     test('parses a number literal', () => {
@@ -153,6 +153,17 @@ describe('quote reader macro', () => {
         expect(parse(`'token`)).toBe(`(quote token)`)
         expect(parse(`'"str"`)).toBe(`(quote "str")`)
         expect(parse(`'123`)).toBe(`(quote 123)`)
+    })
+})
+
+describe('comments', () => {
+    test('semicolons comment out the rest of the line', () => {
+        expect(
+            run(`
+        (let (x ;3
+              4)
+            x)`)
+        ).toBe('4')
     })
 })
 
