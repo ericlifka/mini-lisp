@@ -12,4 +12,3 @@ data types:
     - hashmap
 
 loading stdlib functions in mlisp
-improve repl so it can parse multiple lines

@@ -42,7 +42,9 @@ describe('module systems', () => {
     })
 
     test('module lookup symbols can only be one deep', () => {
-        expect(() => run(`(module/thing/other-stuff 5)`)).toThrow(`Symantic error: can only have one / in a symbol`)
+        expect(() => run(`(module/thing/other-stuff 5)`)).toThrow(
+            `Symantic error: can only have one module lookup in a symbol`
+        )
     })
 
     test('error if module not imported', () => {

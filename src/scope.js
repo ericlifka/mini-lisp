@@ -82,24 +82,23 @@ export function findDeclaredInScope(scopeChain, symbol) {
 export function setOnScope(scope, symbol, value) {
     assert(TYPE.token === symbol.type, `Type error: type ${symbol.type} can not be set on scope`)
     assert(scope !== __LANGUAGE_SCOPE__, `error setting symbol ${symbol.value}: cannot modify language scope`)
+    assert(!/.+\/.+/.test(symbol.value), `Can't declare variable matching module lookup signature: ${symbol.value}`)
 
     scope.tokens[symbol.value] = value
 }
 
 function moduleFromSymbolName(symbol) {
-    let module
-    let name
-    let parts = symbol.value.split('/')
-    if (parts.length === 2) {
-        module = parts[0]
-        name = parts[1]
-    } else if (parts.length === 1) {
-        name = parts[0]
+    let str = symbol.value
+    if (/.+\/.+/.test(str)) {
+        let parts = symbol.value.split('/')
+        if (parts.length === 2) {
+            return [parts[1], parts[0]]
+        } else {
+            assert(false, `Symantic error: can only have one module lookup in a symbol`)
+        }
     } else {
-        assert(false, `Symantic error: can only have one / in a symbol`)
+        return [str, null]
     }
-
-    return [name, module]
 }
 
 function lookupModuleToken(scope, name, module) {

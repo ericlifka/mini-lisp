@@ -2,13 +2,7 @@ import { runCode } from '../src/eval'
 import { printToString } from '../src/logger'
 import { parseString } from '../src/parser'
 import { createScope } from '../src/scope'
-import {
-    nullType,
-    numberType,
-    stringType,
-    tokenType,
-    TYPE,
-} from '../src/types/types'
+import { nullType, numberType, stringType, tokenType, TYPE } from '../src/types/types'
 
 let run = (input) => printToString(runCode(parseString(input)))
 
@@ -49,10 +43,6 @@ describe('builtin functions', () => {
     describe('+', () => {
         test('can add numbers with +', () => {
             expect(run('(+ 1 2)')).toBe('3')
-        })
-
-        test('can handle no arguments', () => {
-            expect(run('(+)')).toBe('0')
         })
 
         test('can handle a single argument', () => {
