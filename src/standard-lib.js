@@ -1,6 +1,5 @@
 import { runCode } from './eval'
-import { log, printToString } from './logger'
-import { checkExpressionReady, checkNeedsInput, getExpression, newReader, parseToNextBreak } from './parser'
+import { checkExpressionReady, getExpression, newReader, parseToNextBreak } from './parser'
 
 const stdLib = `
 (defmacro ++1 (param)
@@ -18,9 +17,7 @@ export function loadStandardLibIntoScope(scope) {
         parseToNextBreak(reader)
 
         if (checkExpressionReady(reader)) {
-            let expr = getExpression(reader)
-            runCode(expr, scope)
-            libFunctions++
+            runCode(getExpression(reader), scope)
         }
     })
 }

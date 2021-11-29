@@ -1,5 +1,5 @@
 import { assert } from '../assert'
-import { listGetAtIndex, listLength, promoteConsToList } from '../types/list'
+import { listGetAtIndex, listLength, promoteConsToList, mapList, toList } from '../types/list'
 import { consType, functionType, listType, nullType, numberType, tokenType, TYPE } from '../types/types'
 
 function consfunctionForm(params) {
@@ -58,10 +58,36 @@ function lengthFunctionForm(params) {
     assert(false, `(length) only works on lists`)
 }
 
+function mapFunctionForm(params) {
+    let fn = listGetAtIndex(params, 0)
+    let list = listGetAtIndex(params, 1)
+    assert(
+        fn.type === TYPE.function && (list.type === TYPE.list || list.type === TYPE.null),
+        `Argument error: map expects a function`
+    )
+
+    let mapper = (list) => {
+        assert(list.type === TYPE.list, `Argument error: bound map expects a list`)
+
+        return mapList(list, (param) => {
+            return fn.execute(toList(param))
+        })
+    }
+
+    if (list.type === TYPE.null) {
+        return functionType('(map list)', (params) => {
+            return mapper(listGetAtIndex(params, 0))
+        })
+    } else {
+        return mapper(list)
+    }
+}
+
 export default [
     [tokenType('list'), functionType(`(list ...)`, (params) => params)],
     [tokenType('cons'), functionType(`(cons entity list|null|entity)`, consfunctionForm)],
     [tokenType('first'), functionType(`(first list)`, firstFunctionForm)],
     [tokenType('rest'), functionType(`(rest list)`, restFunctionForm)],
     [tokenType('length'), functionType(`(length list)`, lengthFunctionForm)],
+    [tokenType('map'), functionType(`(map fn)|(map fn list)`, mapFunctionForm)],
 ]

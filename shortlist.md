@@ -2,10 +2,10 @@ reader improvements:
     - backtick and untick reader macros
 
 language functions:
-    - map / reduce
+    - reduce / filter
+    - do
+    - cond
 
 data types:
     - vector
     - hashmap
-
-loading stdlib functions in mlisp
