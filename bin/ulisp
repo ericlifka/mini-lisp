@@ -1,4 +1,8 @@
 #!/usr/bin/env node
 
-require = require('esm')(module /*, options*/);
-require('../src/index').cli(process.argv);
+require = require('esm')(module /*, options*/)
+try {
+    require('../src/index').cli(process.argv)
+} catch (e) {
+    console.warn('Error in uLisp:', e)
+}

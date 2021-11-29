@@ -212,8 +212,8 @@ export function parseString(string) {
 }
 
 export function parseToNextBreak(reader) {
-    let shouldContinue
-    do {
+    let shouldContinue = true
+    while (shouldContinue) {
         shouldContinue = stepReader(reader)
-    } while (shouldContinue)
+    }
 }

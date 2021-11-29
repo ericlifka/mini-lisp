@@ -1,5 +1,5 @@
 import { assert } from '../assert'
-import { findDeclaredInScope, setOnScope } from '../scope'
+import { findDeclaredInScope, setOnScope, isLanguageScope } from '../scope'
 import { listGetAtIndex, listLength } from '../types/list'
 import { nullType, specialFormType, tokenType } from '../types/types'
 import { runCode } from '../eval'
@@ -13,6 +13,7 @@ export function updateForm(argList, scope) {
 
         let declaredInScope = findDeclaredInScope(scope, symbol)
         assert(!!declaredInScope, `Error: symbol ${symbol.value} not declared anywhere in scope`)
+        assert(!isLanguageScope(scope), `Error: update cannot overwrite language level tokens`)
 
         setOnScope(declaredInScope, symbol, runCode(expr, scope))
     }

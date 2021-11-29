@@ -2,9 +2,12 @@ import { stringType, tokenType, TYPE } from './types/types'
 import { assert } from './assert'
 import builtIns from './language-forms'
 import { loadModule } from './loader'
+import { loadStandardLibIntoScope } from './standard-lib'
 
 const __LANGUAGE_SCOPE__ = createScope(builtIns, null)
 const __GLOBAL_SCOPE__ = createScope([], __LANGUAGE_SCOPE__)
+
+loadStandardLibIntoScope(__LANGUAGE_SCOPE__)
 
 export function getGlobalScope() {
     return __GLOBAL_SCOPE__
@@ -31,6 +34,14 @@ export function createScope(declaredSymbols, parent) {
 
 export function newFileScope(filename) {
     return createScope([[tokenType(':file-name'), stringType(filename)]], getGlobalScope())
+}
+
+export function isGlobalScope(scope) {
+    return scope === __GLOBAL_SCOPE__
+}
+
+export function isLanguageScope(scope) {
+    return scope === __LANGUAGE_SCOPE__
 }
 
 export function createModule(token, parent = getGlobalScope()) {
@@ -93,7 +104,6 @@ export function findDeclaredInScope(scopeChain, symbol) {
 
 export function setOnScope(scope, symbol, value) {
     assert(TYPE.token === symbol.type, `Type error: type ${symbol.type} can not be set on scope`)
-    assert(scope !== __LANGUAGE_SCOPE__, `error setting symbol ${symbol.value}: cannot modify language scope`)
     assert(!/.+\/.+/.test(symbol.value), `Can't declare variable matching module lookup signature: ${symbol.value}`)
 
     scope.tokens[symbol.value] = value
