@@ -1,12 +1,20 @@
 {
     "name": "mini-lisp",
     "version": "1.0.0",
-    "description": "A Mini Lisp environment to run inside javascript",
+    "description": "A Mini Lisp environment to run anywhere javascript runs",
     "main": "src/index.js",
+    "bin": {
+        "ulisp": "bin/ulisp"
+    },
+    "keywords": [
+        "cli",
+        "lisp",
+        "ulisp",
+        "programming langauge"
+    ],
     "scripts": {
         "format": "prettier --write .",
-        "build": "babel src/ --out-dir dist/",
-        "start": "npm run build && node dist/index.js",
+        "start": "node bin/ulisp",
         "test": "jest"
     },
     "author": "Eric Lifka (eric.lifka@gmail.com)",
@@ -18,5 +26,8 @@
         "@babel/preset-env": "^7.16.4",
         "jest": "^27.3.1",
         "prettier": "^2.4.1"
+    },
+    "dependencies": {
+        "esm": "^3.2.25"
     }
 }
