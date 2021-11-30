@@ -1,3 +1,4 @@
-import printForm from './print'
+import printForms from './print'
+import readForm from './read'
 
-export default [printForm]
+export default [...printForms, read]

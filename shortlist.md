@@ -5,7 +5,6 @@ data types:
     - vector
     - hashmap
 
-looping structures
 improved error messages
 tail call recursion
 

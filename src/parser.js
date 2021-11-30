@@ -13,11 +13,17 @@ const STATE = {
 
 const symbolChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./_-+=?<>!@#$%^&*:|'
 const syntaxCloseChars = ')'
+const quoteMap = {
+    "'": 'quote',
+    '`': 'back-quote',
+    ',': 'unquote',
+}
+const quoteChars = Object.keys(quoteMap)
 
 const shouldOpenComment = (ch, reader) => reader.state !== STATE.inString && ch === ';'
 const shouldCloseComment = (ch, reader) => reader.state === STATE.inComment && ch === '\n'
 
-const shouldStartQuote = (ch, reader) => reader.state === STATE.ready && ch === "'"
+const shouldStartQuote = (ch, reader) => reader.state === STATE.ready && quoteChars.indexOf(ch) !== -1
 const shouldStartEscape = (ch, reader) => ch === '\\' && !reader.escapeFlag
 
 const shouldOpenList = (ch, reader) => reader.state === STATE.ready && ch === '('
@@ -36,7 +42,7 @@ const newDataState = (cell, _state, reader) => {
     addToList(reader.current, cell)
 
     if (reader.quoteFlag) {
-        cell.__special_quote__ = true
+        cell.__special_quote__ = quoteMap[reader.quoteFlag]
         cell.__parent_cons__ = reader.current.last
         reader.quoteFlag = false
     }
@@ -80,7 +86,7 @@ const checkForConversions = (token) => {
 const checkForUnfinishedEscapeQuote = (cell) => {
     if (cell.__special_quote__) {
         let quote = listType()
-        addToList(quote, tokenType('quote'))
+        addToList(quote, tokenType(cell.__special_quote__))
         addToList(quote, cell)
         cell.__parent_cons__.value = quote
 
@@ -116,7 +122,7 @@ export function stepReader(reader) {
     if (shouldOpenComment(ch, reader)) {
         reader.state = STATE.inComment
     } else if (shouldStartQuote(ch, reader)) {
-        reader.quoteFlag = true
+        reader.quoteFlag = ch
     } else if (shouldStartEscape(ch, reader)) {
         reader.escapeFlag = true
     } else if (shouldOpenList(ch, reader)) {

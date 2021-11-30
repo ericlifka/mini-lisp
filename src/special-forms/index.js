@@ -9,6 +9,7 @@ import importForm from './import'
 import doForm from './do'
 import condForm from './cond'
 import whileForm from './while'
+import evalForm from './eval'
 
 export default [
     ...runnables,
@@ -22,4 +23,5 @@ export default [
     doForm,
     condForm,
     whileForm,
+    evalForm,
 ]
