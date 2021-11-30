@@ -6,22 +6,18 @@ import { runCode } from '../eval'
 
 export function setForm(argList, scope) {
     let argCount = listLength(argList)
+    let result = nullType()
 
     for (let index = 0; index < argCount; index += 2) {
         let symbol = listGetAtIndex(argList, index)
         let expr = listGetAtIndex(argList, index + 1)
+        assert(!lookupOnScope(scope, symbol), `Error: symbol ${symbol.value} already declared at this scope`)
 
-        assert(
-            !lookupOnScope(scope, symbol),
-            `Error: symbol ${symbol.value} already declared at this scope`,
-        )
-        setOnScope(scope, symbol, runCode(expr, scope))
+        result = runCode(expr, scope)
+        setOnScope(scope, symbol, result)
     }
 
-    return nullType()
+    return result
 }
 
-export default [
-    tokenType('set'),
-    specialFormType('<set special form>', setForm),
-]
+export default [tokenType('set'), specialFormType('<set special form>', setForm)]

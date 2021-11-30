@@ -6,6 +6,7 @@ import { runCode } from '../eval'
 
 export function updateForm(argList, scope) {
     let argCount = listLength(argList)
+    let result = nullType()
 
     for (let index = 0; index < argCount; index += 2) {
         let symbol = listGetAtIndex(argList, index)
@@ -15,10 +16,11 @@ export function updateForm(argList, scope) {
         assert(!!declaredInScope, `Error: symbol ${symbol.value} not declared anywhere in scope`)
         assert(!isLanguageScope(scope), `Error: update cannot overwrite language level tokens`)
 
-        setOnScope(declaredInScope, symbol, runCode(expr, scope))
+        result = runCode(expr, scope)
+        setOnScope(declaredInScope, symbol, result)
     }
 
-    return nullType()
+    return result
 }
 
 export default [tokenType('update'), specialFormType('<update special form>', updateForm)]

@@ -2,11 +2,11 @@ import { runCode } from './eval'
 import { checkExpressionReady, getExpression, newReader, parseToNextBreak } from './parser'
 
 const stdLib = `
-(defmacro ++1 (param)
-  (cons '+ (cons 1 (cons param))))
+(defmacro ++ (param)
+  \`(update ,param (+ ,param 1)))
 
-(defmacro --1 (param)
-  (cons '- (cons param (cons 1))))
+(defmacro -- (param)
+  \`(update ,param (- ,param 1)))
 `
 
 export function loadStandardLibIntoScope(scope) {
