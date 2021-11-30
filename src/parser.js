@@ -17,6 +17,7 @@ const quoteMap = {
     "'": 'quote',
     '`': 'back-quote',
     ',': 'unquote',
+    '~': 'unquote',
 }
 const quoteChars = Object.keys(quoteMap)
 

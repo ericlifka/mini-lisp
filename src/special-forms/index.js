@@ -10,9 +10,11 @@ import doForm from './do'
 import condForm from './cond'
 import whileForm from './while'
 import evalForm from './eval'
+import backQuoteForms from './back-quote'
 
 export default [
     ...runnables,
+    ...backQuoteForms,
     ifForm,
     letForm,
     setForm,
