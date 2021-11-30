@@ -1,9 +1,6 @@
 reader improvements:
     - backtick and untick reader macros
 
-language functions:
-    - filter
-
 data types:
     - vector
     - hashmap

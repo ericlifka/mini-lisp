@@ -8,5 +8,18 @@ import moduleForm from './module'
 import importForm from './import'
 import doForm from './do'
 import condForm from './cond'
+import whileForm from './while'
 
-export default [...runnables, ifForm, letForm, setForm, updateForm, quoteForm, moduleForm, importForm, doForm, condForm]
+export default [
+    ...runnables,
+    ifForm,
+    letForm,
+    setForm,
+    updateForm,
+    quoteForm,
+    moduleForm,
+    importForm,
+    doForm,
+    condForm,
+    whileForm,
+]
