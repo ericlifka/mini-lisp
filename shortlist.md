@@ -2,10 +2,15 @@ reader improvements:
     - backtick and untick reader macros
 
 language functions:
-    - reduce / filter
-    - do
-    - cond
+    - filter
 
 data types:
     - vector
     - hashmap
+
+looping structures
+improved error messages
+tail call recursion
+
+
+fix test suite

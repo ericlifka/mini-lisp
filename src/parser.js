@@ -11,7 +11,7 @@ const STATE = {
     inComment: 'in-comment',
 }
 
-const symbolChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./_-+?<>!@#$%^&*:|'
+const symbolChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./_-+=?<>!@#$%^&*:|'
 const syntaxCloseChars = ')'
 
 const shouldOpenComment = (ch, reader) => reader.state !== STATE.inString && ch === ';'

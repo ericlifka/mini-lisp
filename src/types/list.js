@@ -52,9 +52,10 @@ export function addToList(list, value) {
 export function mapList(list, fn) {
     let newList = listType()
     let ptr = list.head
+    let i = 0
 
     while (ptr.type !== TYPE.null) {
-        addToList(newList, fn(ptr.value))
+        addToList(newList, fn(ptr.value, i++))
         ptr = ptr.next
     }
 
@@ -63,10 +64,27 @@ export function mapList(list, fn) {
 
 export function listForEach(list, fn) {
     let ptr = list.head
+    let i = 0
+
     while (ptr.type !== TYPE.null) {
-        fn(ptr.value)
+        fn(ptr.value, i++)
         ptr = ptr.next
     }
+}
+
+export function listFilter(list, fn) {
+    let newList = listType()
+    let ptr = list.head
+    let i = 0
+
+    while (ptr.type !== TYPE.null) {
+        if (fn(ptr.value, i++)) {
+            addToList(newList, ptr.value)
+        }
+        ptr = ptr.next
+    }
+
+    return newList
 }
 
 export function promoteConsToList(cons) {
