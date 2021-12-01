@@ -1,6 +1,6 @@
 import { assert } from './assert'
 import { addToList } from './types/list'
-import { listType, stringType, numberType, tokenType, TYPE } from './types/types'
+import { listType, stringType, numberType, tokenType, TYPE, vectorType } from './types/types'
 
 const STATE = {
     ready: 'ready',
@@ -12,7 +12,7 @@ const STATE = {
 }
 
 const symbolChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./_-+=?<>!@#$%^&*:|'
-const syntaxCloseChars = ')'
+const syntaxCloseChars = ')]'
 const quoteMap = {
     "'": 'quote',
     '`': 'back-quote',
@@ -30,6 +30,9 @@ const shouldStartEscape = (ch, reader) => ch === '\\' && !reader.escapeFlag
 const shouldOpenList = (ch, reader) => reader.state === STATE.ready && ch === '('
 const shouldCloseList = (ch, reader) => reader.state === STATE.ready && ch === ')'
 
+const shouldOpenVector = (ch, reader) => reader.state === STATE.ready && ch === '['
+const shouldCloseVector = (ch, reader) => reader.state === STATE.ready && ch === ']'
+
 const shouldOpenString = (ch, reader) => reader.state === STATE.ready && '"' === ch
 const shouldCloseString = (ch, reader) => reader.state === STATE.inString && ch === '"' && !reader.escapeFlag
 const shouldContinueString = (ch, reader) => reader.state === STATE.inString
@@ -39,8 +42,17 @@ const shouldCloseToken = (ch, reader) =>
     reader.state === STATE.inToken && (/\s/.test(ch) || syntaxCloseChars.indexOf(ch) !== -1)
 const shouldContinueToken = (ch, reader) => reader.state === STATE.inToken
 
+const addToCurrent = (current, cell) => {
+    if (current.type === TYPE.list) {
+        addToList(current, cell)
+    }
+    if (current.type === TYPE.vector) {
+        current.value.push(cell)
+    }
+}
+
 const newDataState = (cell, _state, reader) => {
-    addToList(reader.current, cell)
+    addToCurrent(reader.current, cell)
 
     if (reader.quoteFlag) {
         cell.__special_quote__ = quoteMap[reader.quoteFlag]
@@ -128,6 +140,8 @@ export function stepReader(reader) {
         reader.escapeFlag = true
     } else if (shouldOpenList(ch, reader)) {
         newDataState(listType(), STATE.ready, reader)
+    } else if (shouldOpenVector(ch, reader)) {
+        newDataState(vectorType(), STATE.ready, reader)
     } else if (shouldOpenString(ch, reader)) {
         newDataState(stringType(), STATE.inString, reader)
     } else if (shouldOpenToken(ch, reader)) {
@@ -139,10 +153,12 @@ export function stepReader(reader) {
     } else if (shouldCloseToken(ch, reader)) {
         checkForConversions(popState(reader))
 
-        if (shouldCloseList(ch, reader)) {
+        if (shouldCloseList(ch, reader) || shouldCloseVector(ch, reader)) {
             popState(reader)
         }
     } else if (shouldCloseList(ch, reader)) {
+        popState(reader)
+    } else if (shouldCloseVector(ch, reader)) {
         popState(reader)
     } else if (shouldContinueString(ch, reader)) {
         reader.current.value += ch

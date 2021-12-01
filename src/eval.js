@@ -12,6 +12,7 @@ export function runCode(code, scope = getGlobalScope()) {
         case TYPE.number:
         case TYPE.boolean:
         case TYPE.null:
+        case TYPE.vector:
         case TYPE.cons:
         case TYPE.function:
         case TYPE.macro:

@@ -1,6 +1,7 @@
 export const TYPE = {
     cons: 'cons',
     list: 'list',
+    vector: 'vector',
     boolean: 'boolean',
     string: 'string',
     number: 'number',
@@ -21,6 +22,11 @@ export const listType = () => ({
     type: TYPE.list,
     head: nullType(),
     last: nullType(),
+})
+
+export const vectorType = (value = []) => ({
+    type: TYPE.vector,
+    value,
 })
 
 export const booleanType = (value = false) => ({

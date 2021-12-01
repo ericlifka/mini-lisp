@@ -23,6 +23,9 @@ export const printToString = (cell) => {
         case TYPE.list:
             return listToString(cell)
 
+        case TYPE.vector:
+            return vectorToString(cell)
+
         case TYPE.function:
         case TYPE.macro:
             return `${cell.doc}`
@@ -43,6 +46,10 @@ const listToString = (list) => {
     printStr += printToString(ptr.value) + ')'
 
     return printStr
+}
+
+const vectorToString = (vector) => {
+    return `[${vector.value.map((cell) => printToString(cell)).join(' ')}]`
 }
 
 const stringToString = (string) =>
