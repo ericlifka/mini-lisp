@@ -1,7 +1,7 @@
 import { assert } from './assert'
 import { printToString } from './logger'
 import { getGlobalScope, lookupOnScopeChain } from './scope'
-import { mapList, promoteConsToList } from './types/list'
+import { listMap, promoteConsToList } from './types/list'
 import { TYPE } from './types/types'
 
 export function runCode(code, scope = getGlobalScope()) {
@@ -67,13 +67,13 @@ function runSpecialForm(specialForm, argList, scope) {
 }
 
 function runFunction(fn, argList, scope) {
-    let params = mapList(argList, (entity) => runCode(entity, scope))
+    let params = listMap(argList, (entity) => runCode(entity, scope))
 
-    return fn.execute(params)
+    return fn.execute(params, scope)
 }
 
 function runMacro(macro, argList, scope) {
-    let expand = macro.execute(argList)
+    let expand = macro.execute(argList, scope)
 
     return runCode(expand, scope)
 }

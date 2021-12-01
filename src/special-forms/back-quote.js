@@ -1,4 +1,4 @@
-import { listGetAtIndex, mapList } from '../types/list'
+import { listGetAtIndex, listMap } from '../types/list'
 import { specialFormType, tokenType, TYPE } from '../types/types'
 import { runCode } from '../eval'
 
@@ -11,11 +11,11 @@ function backQuoteSpecialForm(params, scope) {
         } else if (isUnquoteList(entity)) {
             return runCode(entity, scope)
         } else {
-            return mapList(entity, mapper)
+            return listMap(entity, mapper)
         }
     }
 
-    return mapList(listGetAtIndex(params, 0), mapper)
+    return listMap(listGetAtIndex(params, 0), mapper)
 }
 
 function unquoteSpecialForm(params, scope) {

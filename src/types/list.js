@@ -39,6 +39,15 @@ export function toList(...args) {
     return promoteConsToList(consPtr)
 }
 
+export function toListWithLog(...args) {
+    console.log('toList - ', args)
+    let consPtr = nullType()
+    for (let i = args.length - 1; i >= 0; i--) {
+        consPtr = consType(args[i], consPtr)
+    }
+    return promoteConsToList(consPtr)
+}
+
 export function addToList(list, value) {
     // WARNING: must only ever be used on a list being constructed, either by the parser or by a function creating a new list copy
     if (list.head.type === TYPE.null) {
@@ -49,7 +58,7 @@ export function addToList(list, value) {
     }
 }
 
-export function mapList(list, fn) {
+export function listMap(list, fn) {
     let newList = listType()
     let ptr = list.head
     let i = 0

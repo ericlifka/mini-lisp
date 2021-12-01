@@ -1,9 +1,23 @@
-import { listGetAtIndex } from '../types/list'
-import { functionType, tokenType, TYPE } from '../types/types'
+import { listGetAtIndex, listLength } from '../types/list'
+import { functionType, hashmapType, tokenType, TYPE } from '../types/types'
 import { hashmapGet, hashmapSet } from '../types/hashmap'
 import { assert } from '../assert'
 
-function hashmapGetForm(params) {
+function hashmapForm(params) {
+    let hashmap = hashmapType()
+    let length = listLength(params)
+
+    for (let i = 0; i < length; i += 2) {
+        let key = listGetAtIndex(params, i)
+        let value = listGetAtIndex(params, i + 1)
+
+        hashmapSet(hashmap, key, value)
+    }
+
+    return hashmap
+}
+
+export function hashmapGetForm(params) {
     let hashmap = listGetAtIndex(params, 0)
     let key = listGetAtIndex(params, 1)
 
@@ -33,6 +47,7 @@ function hashmapSetForm(params) {
 }
 
 export default [
+    [tokenType('hashmap'), functionType(`(hashmap key1 value1 ...)`, hashmapForm)],
     [tokenType('hashmap-get'), functionType(`(hashmap-get hashmap key)`, hashmapGetForm)],
     [tokenType('hashmap-set'), functionType('(hashmap-set hashmap key value)', hashmapSetForm)],
 ]

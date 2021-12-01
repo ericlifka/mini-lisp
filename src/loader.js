@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { assert } from './assert'
 import { runCode } from './eval'
+import { printToString } from './logger'
 import { checkExpressionReady, checkNeedsInput, getExpression, newReader, parseToNextBreak } from './parser'
 import { newFileScope } from './scope'
 import { TYPE } from './types/types'
@@ -15,15 +16,12 @@ export function runFile(filename) {
     const fileScope = newFileScope(filename)
     const reader = newReader(fileContents)
 
-    parseToNextBreak(reader)
+    while (!checkNeedsInput(reader)) {
+        parseToNextBreak(reader)
 
-    if (checkExpressionReady(reader)) {
-        let expr = getExpression(reader)
-        runCode(expr, fileScope)
-    }
-    // should really support more than one list structure per file when i'm not feeling lazy
-    else {
-        assert(false, `File Loader expects one complete list structure`)
+        if (checkExpressionReady(reader)) {
+            runCode(getExpression(reader), fileScope)
+        }
     }
 }
 

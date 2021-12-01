@@ -1,7 +1,7 @@
 import { assert } from './assert'
 import { hashmapSet } from './types/hashmap'
 import { addToList } from './types/list'
-import { listType, stringType, numberType, tokenType, TYPE, vectorType, hashmapType, nullType } from './types/types'
+import { listType, stringType, tokenType, TYPE, nullType } from './types/types'
 
 const STATE = {
     ready: 'ready',
@@ -14,6 +14,14 @@ const STATE = {
 
 const symbolChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./_-+=?<>!@#$%^&*:|'
 const syntaxCloseChars = ')]}'
+const specialEscapeChars = {
+    b: '\b',
+    f: '\f',
+    n: '\n',
+    r: '\r',
+    t: '\t',
+    v: '\v',
+}
 const quoteMap = {
     "'": 'quote',
     '`': 'back-quote',
@@ -127,6 +135,18 @@ const checkForUnfinishedEscapeQuote = (cell) => {
     return cell
 }
 
+const hashmapBuilderType = () => {
+    let list = listType()
+    addToList(list, tokenType('hashmap'))
+    return list
+}
+
+const vectorBuilderType = () => {
+    let list = listType()
+    addToList(list, tokenType('vector'))
+    return list
+}
+
 export function newReader(input = '') {
     let wrapper = listType()
     return {
@@ -158,9 +178,9 @@ export function stepReader(reader) {
     } else if (shouldOpenList(ch, reader)) {
         newDataState(listType(), STATE.ready, reader)
     } else if (shouldOpenVector(ch, reader)) {
-        newDataState(vectorType(), STATE.ready, reader)
+        newDataState(vectorBuilderType(), STATE.ready, reader)
     } else if (shouldOpenHashmap(ch, reader)) {
-        newDataState(hashmapType(), STATE.ready, reader)
+        newDataState(hashmapBuilderType(), STATE.ready, reader)
     } else if (shouldOpenString(ch, reader)) {
         newDataState(stringType(), STATE.inString, reader)
     } else if (shouldOpenToken(ch, reader)) {
@@ -182,8 +202,12 @@ export function stepReader(reader) {
     } else if (shouldCloseHashmap(ch, reader)) {
         popState(reader)
     } else if (shouldContinueString(ch, reader)) {
-        reader.current.value += ch
-        reader.escapeFlag = false
+        if (reader.escapeFlag) {
+            reader.current.value += specialEscapeChars[ch] || ch
+            reader.escapeFlag = false
+        } else {
+            reader.current.value += ch
+        }
     } else if (shouldContinueToken(ch, reader)) {
         reader.current.value += ch
     }
@@ -197,11 +221,7 @@ export function stepReader(reader) {
             popState(reader)
         }
 
-        if (reader.current === reader.head) {
-            reader.state = STATE.exprReady
-        } else {
-            reader.state = STATE.needInput
-        }
+        reader.state = STATE.needInput
     }
 
     return reader.state !== STATE.needInput && reader.state !== STATE.exprReady

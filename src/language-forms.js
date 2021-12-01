@@ -3,6 +3,7 @@ import specialForms from './special-forms'
 import logicForms from './logic'
 import listForms from './lists'
 import hashmapForms from './hashmaps'
+import vectorForms from './vectors'
 import stringForms from './strings'
 import utilityForms from './utility'
 
@@ -13,6 +14,7 @@ export default [
     ...logicForms,
     ...listForms,
     ...hashmapForms,
+    ...vectorForms,
     ...stringForms,
     ...utilityForms,
 ]

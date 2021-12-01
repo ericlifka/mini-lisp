@@ -5,8 +5,11 @@ macroexpand
 re-implement as many things with backquote and unquote macros as possible
 revisit math functions, it's annoying they don't take more numbers at once
 
+improve function doc strings for all builtins
 improved error messages
 tail call recursion
+
+---> macro
 
 improve command line interaction with http://yargs.js.org/
 

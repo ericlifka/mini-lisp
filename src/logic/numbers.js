@@ -5,6 +5,7 @@ import { booleanType as boolean, tokenType as token, functionType, numberType as
 const twoParamMath = (resultType, fn) => (params) => {
     let first = listGetAtIndex(params, 0)
     let second = listGetAtIndex(params, 1)
+
     assert(
         listLength(params) === 2 && first.type === TYPE.number && second.type === TYPE.number,
         `Math functions require exactly two numbers`

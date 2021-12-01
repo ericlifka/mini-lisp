@@ -1,13 +1,18 @@
 import { assert } from '../assert'
-import { listGetAtIndex, mapList, toList } from '../types/list'
+import { listGetAtIndex, listMap, toList } from '../types/list'
 import { functionType, tokenType, TYPE } from '../types/types'
+import { vectorMap } from '../types/vector'
 
 function runMap(fn, list) {
-    assert(list.type === TYPE.list, `Second parameter to map must be a list type`)
+    let mapper = (val, index) => fn.execute(toList(val, index, list))
 
-    return mapList(list, (val, index) => {
-        return fn.execute(toList(val, index))
-    })
+    if (list.type === TYPE.list) {
+        return listMap(list, mapper)
+    } else if (list.type === TYPE.vector) {
+        return vectorMap(list, mapper)
+    }
+
+    assert(false, `Second parameter to map must be an iteratable type`)
 }
 
 function mapFunctionForm(params) {
@@ -16,10 +21,10 @@ function mapFunctionForm(params) {
 
     assert(fn.type === TYPE.function, `First parameter to map must be a function`)
     if (list.type === TYPE.null) {
-        return functionType(`(map list)`, (otherParams) => runMap(fn, listGetAtIndex(otherParams, 0)))
+        return functionType(`(map list|vector)`, (otherParams) => runMap(fn, listGetAtIndex(otherParams, 0)))
     } else {
         return runMap(fn, list)
     }
 }
 
-export default [tokenType('map'), functionType(`(map fn)|(map fn list)`, mapFunctionForm)]
+export default [tokenType('map'), functionType(`(map fn)|(map fn list|vector)`, mapFunctionForm)]
