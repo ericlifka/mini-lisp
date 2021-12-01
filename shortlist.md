@@ -1,8 +1,4 @@
-data types:
-    - vector
-    - hashmap
-
-make most list functions work on vectors
+make most list functions work on vectors and hashmaps
 
 macroexpand
 

@@ -2,6 +2,7 @@ import { tokenType } from './types/types'
 import specialForms from './special-forms'
 import logicForms from './logic'
 import listForms from './lists'
+import hashmapForms from './hashmaps'
 import utilityForms from './utility'
 
 export default [
@@ -10,5 +11,6 @@ export default [
     ...specialForms,
     ...logicForms,
     ...listForms,
+    ...hashmapForms,
     ...utilityForms,
 ]

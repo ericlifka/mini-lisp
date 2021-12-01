@@ -1,6 +1,7 @@
 import { assert } from './assert'
+import { hashmapSet } from './types/hashmap'
 import { addToList } from './types/list'
-import { listType, stringType, numberType, tokenType, TYPE, vectorType } from './types/types'
+import { listType, stringType, numberType, tokenType, TYPE, vectorType, hashmapType, nullType } from './types/types'
 
 const STATE = {
     ready: 'ready',
@@ -12,7 +13,7 @@ const STATE = {
 }
 
 const symbolChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./_-+=?<>!@#$%^&*:|'
-const syntaxCloseChars = ')]'
+const syntaxCloseChars = ')]}'
 const quoteMap = {
     "'": 'quote',
     '`': 'back-quote',
@@ -33,6 +34,9 @@ const shouldCloseList = (ch, reader) => reader.state === STATE.ready && ch === '
 const shouldOpenVector = (ch, reader) => reader.state === STATE.ready && ch === '['
 const shouldCloseVector = (ch, reader) => reader.state === STATE.ready && ch === ']'
 
+const shouldOpenHashmap = (ch, reader) => reader.state === STATE.ready && ch === '{'
+const shouldCloseHashmap = (ch, reader) => reader.state === STATE.ready && ch === '}'
+
 const shouldOpenString = (ch, reader) => reader.state === STATE.ready && '"' === ch
 const shouldCloseString = (ch, reader) => reader.state === STATE.inString && ch === '"' && !reader.escapeFlag
 const shouldContinueString = (ch, reader) => reader.state === STATE.inString
@@ -48,6 +52,9 @@ const addToCurrent = (current, cell) => {
     }
     if (current.type === TYPE.vector) {
         current.value.push(cell)
+    }
+    if (current.type === TYPE.hashmap) {
+        current.keys.push(cell)
     }
 }
 
@@ -78,22 +85,32 @@ const popState = (reader) => {
     return lastCell
 }
 
-const checkForConversions = (token) => {
-    if (token.type === TYPE.token) {
-        let num = Number(token.value)
+const checkForConversions = (entity) => {
+    if (entity.type === TYPE.token) {
+        let num = Number(entity.value)
         if (!isNaN(num)) {
-            token.value = num
-            token.type = TYPE.number
-        } else if (token.value === 'true' || token.value === 'false') {
-            token.value = token.value === 'true'
-            token.type = TYPE.boolean
-        } else if (token.value === 'null') {
-            token.type = TYPE.null
-            delete token.value
+            entity.value = num
+            entity.type = TYPE.number
+        } else if (entity.value === 'true' || entity.value === 'false') {
+            entity.value = entity.value === 'true'
+            entity.type = TYPE.boolean
+        } else if (entity.value === 'null') {
+            entity.type = TYPE.null
+            delete entity.value
+        }
+    } else if (entity.type === TYPE.hashmap) {
+        let pairs = entity.keys
+        entity.keys = []
+
+        for (let i = 0; i < pairs.length; i += 2) {
+            let key = pairs[i]
+            let value = pairs[i + 1] || nullType()
+
+            hashmapSet(entity, key, value)
         }
     }
 
-    return token
+    return entity
 }
 
 const checkForUnfinishedEscapeQuote = (cell) => {
@@ -142,6 +159,8 @@ export function stepReader(reader) {
         newDataState(listType(), STATE.ready, reader)
     } else if (shouldOpenVector(ch, reader)) {
         newDataState(vectorType(), STATE.ready, reader)
+    } else if (shouldOpenHashmap(ch, reader)) {
+        newDataState(hashmapType(), STATE.ready, reader)
     } else if (shouldOpenString(ch, reader)) {
         newDataState(stringType(), STATE.inString, reader)
     } else if (shouldOpenToken(ch, reader)) {
@@ -153,12 +172,14 @@ export function stepReader(reader) {
     } else if (shouldCloseToken(ch, reader)) {
         checkForConversions(popState(reader))
 
-        if (shouldCloseList(ch, reader) || shouldCloseVector(ch, reader)) {
+        if (shouldCloseList(ch, reader) || shouldCloseVector(ch, reader) || shouldCloseHashmap(ch, reader)) {
             popState(reader)
         }
     } else if (shouldCloseList(ch, reader)) {
         popState(reader)
     } else if (shouldCloseVector(ch, reader)) {
+        popState(reader)
+    } else if (shouldCloseHashmap(ch, reader)) {
         popState(reader)
     } else if (shouldContinueString(ch, reader)) {
         reader.current.value += ch

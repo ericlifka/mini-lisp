@@ -13,19 +13,28 @@ export function runCode(code, scope = getGlobalScope()) {
         case TYPE.boolean:
         case TYPE.null:
         case TYPE.vector:
+        case TYPE.hashmap:
         case TYPE.cons:
         case TYPE.function:
         case TYPE.macro:
             return code
 
         case TYPE.token:
-            return lookupOnScopeChain(scope, code)
+            return runToken(code, scope)
 
         case TYPE.list:
             return runList(code, scope)
     }
 
     assert(false, `Type error: unexpected type passed to eval: ${code.type}`)
+}
+
+function runToken(token, scope) {
+    if (token.value[0] === ':') {
+        return token
+    } else {
+        return lookupOnScopeChain(scope, token)
+    }
 }
 
 function runList(list, scope) {

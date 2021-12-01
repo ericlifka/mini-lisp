@@ -26,6 +26,9 @@ export const printToString = (cell) => {
         case TYPE.vector:
             return vectorToString(cell)
 
+        case TYPE.hashmap:
+            return hashmapToString(cell)
+
         case TYPE.function:
         case TYPE.macro:
             return `${cell.doc}`
@@ -50,6 +53,17 @@ const listToString = (list) => {
 
 const vectorToString = (vector) => {
     return `[${vector.value.map((cell) => printToString(cell)).join(' ')}]`
+}
+
+const hashmapToString = (hashmap) => {
+    return `{${hashmap.keys
+        .map((key) => {
+            let keyStr = printToString(key)
+            let valueStr = printToString(hashmap.values[keyStr])
+
+            return `${keyStr} ${valueStr}`
+        })
+        .join(' ')}}`
 }
 
 const stringToString = (string) =>

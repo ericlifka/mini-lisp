@@ -2,6 +2,7 @@ export const TYPE = {
     cons: 'cons',
     list: 'list',
     vector: 'vector',
+    hashmap: 'hashmap',
     boolean: 'boolean',
     string: 'string',
     number: 'number',
@@ -27,6 +28,12 @@ export const listType = () => ({
 export const vectorType = (value = []) => ({
     type: TYPE.vector,
     value,
+})
+
+export const hashmapType = () => ({
+    type: TYPE.hashmap,
+    keys: [],
+    values: {},
 })
 
 export const booleanType = (value = false) => ({
