@@ -1,8 +1,8 @@
 import { assert } from '../assert'
-import { listGetAtIndex, listLength } from '../types/list'
-import { booleanType as boolean, tokenType as token, functionType, numberType as number, TYPE } from '../types/types'
+import { listGetAtIndex, listLength, listReduce, listForEach } from '../types/list'
+import { booleanType, tokenType, functionType, numberType, TYPE } from '../types/types'
 
-const twoParamMath = (resultType, fn) => (params) => {
+const compareNumbers = (fn) => (params) => {
     let first = listGetAtIndex(params, 0)
     let second = listGetAtIndex(params, 1)
 
@@ -11,80 +11,91 @@ const twoParamMath = (resultType, fn) => (params) => {
         `Math functions require exactly two numbers`
     )
 
-    return resultType(fn(first.value, second.value))
+    return booleanType(fn(first.value, second.value))
+}
+
+const combineNumbers = (symbol, fn) => (params) => {
+    return listReduce(params, (accum, elem) => {
+        assert(
+            accum.type === TYPE.number && elem.type === TYPE.number,
+            `Math function ${symbol} only works with numbers`
+        )
+
+        return numberType(fn(accum.value, elem.value))
+    })
 }
 
 export default [
     [
-        token('>'),
+        tokenType('>'),
         functionType(
-            '(> ...numbers)',
-            twoParamMath(boolean, (a, b) => a > b)
+            '(> left right)',
+            compareNumbers((a, b) => a > b)
         ),
     ],
     [
-        token('>='),
+        tokenType('>='),
         functionType(
-            '(>= ...numbers)',
-            twoParamMath(boolean, (a, b) => a >= b)
+            '(>= left right)',
+            compareNumbers((a, b) => a >= b)
         ),
     ],
     [
-        token('<'),
+        tokenType('<'),
         functionType(
-            '(< ...numbers)',
-            twoParamMath(boolean, (a, b) => a < b)
+            '(< left right)',
+            compareNumbers((a, b) => a < b)
         ),
     ],
     [
-        token('<='),
+        tokenType('<='),
         functionType(
-            '(<= ...numbers)',
-            twoParamMath(boolean, (a, b) => a <= b)
+            '(<= left right)',
+            compareNumbers((a, b) => a <= b)
         ),
     ],
     [
-        token('+'),
+        tokenType('+'),
         functionType(
-            '(fn + ...numbers)',
-            twoParamMath(number, (a, b) => a + b)
+            '(+ ...numbers)',
+            combineNumbers('+', (a, b) => a + b)
         ),
     ],
     [
-        token('-'),
+        tokenType('-'),
         functionType(
-            '(fn - ...numbers)',
-            twoParamMath(number, (a, b) => a - b)
+            '(- ...numbers)',
+            combineNumbers('-', (a, b) => a - b)
         ),
     ],
     [
-        token('*'),
+        tokenType('*'),
         functionType(
-            '(fn * ...numbers)',
-            twoParamMath(number, (a, b) => a * b)
+            '(* ...numbers)',
+            combineNumbers('*', (a, b) => a * b)
         ),
     ],
     [
-        token('/'),
+        tokenType('/'),
         functionType(
-            '(fn / ...numbers)',
-            twoParamMath(number, (a, b) => a / b)
+            '(/ ...numbers)',
+            combineNumbers('/', (a, b) => a / b)
         ),
     ],
     [
-        token('%'),
+        tokenType('%'),
         functionType(
-            '(% num1 num2)',
-            twoParamMath(number, (a, b) => a % b)
+            '(% ...numbers)',
+            combineNumbers('%', (a, b) => a % b)
         ),
     ],
     [
-        token('sqrt'),
+        tokenType('sqrt'),
         functionType('(sqrt number)', (params) => {
             let num = listGetAtIndex(params, 0)
             assert(num.type === TYPE.number, `sqrt only works on numbers`)
 
-            return number(Math.sqrt(num.value))
+            return numberType(Math.sqrt(num.value))
         }),
     ],
 ]

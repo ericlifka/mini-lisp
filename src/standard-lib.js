@@ -7,6 +7,9 @@ const stdLib = `
 
 (defmacro -- (param)
   \`(update ,param (- ,param 1)))
+
+(defmacro not-null (param)
+  \`(not (is-null ,param)))
 `
 
 export function loadStandardLibIntoScope(scope) {

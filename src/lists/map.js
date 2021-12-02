@@ -1,10 +1,10 @@
 import { assert } from '../assert'
 import { listGetAtIndex, listMap, toList } from '../types/list'
-import { functionType, tokenType, TYPE } from '../types/types'
+import { functionType, tokenType, numberType, TYPE } from '../types/types'
 import { vectorMap } from '../types/vector'
 
 function runMap(fn, list) {
-    let mapper = (val, index) => fn.execute(toList(val, index, list))
+    let mapper = (val, index) => fn.execute(toList(val, numberType(index), list))
 
     if (list.type === TYPE.list) {
         return listMap(list, mapper)

@@ -1,6 +1,6 @@
 import { printToString } from '../logger'
 import { listForEach, listGetAtIndex } from '../types/list'
-import { functionType, nullType, stringType, tokenType } from '../types/types'
+import { functionType, nullType, stringType, tokenType, TYPE } from '../types/types'
 
 export default [
     [
@@ -8,7 +8,11 @@ export default [
         functionType(`(print ...args)`, (params) => {
             let output = ''
             listForEach(params, (param) => {
-                output += printToString(param)
+                if (param.type === TYPE.string) {
+                    output += param.value
+                } else {
+                    output += printToString(param)
+                }
             })
             console.log(output)
 

@@ -96,6 +96,18 @@ export function listFilter(list, fn) {
     return newList
 }
 
+export function listReduce(list, fn) {
+    let accumulator = first(list)
+    let remaining = rest(list)
+    let i = 1
+
+    listForEach(remaining, (elem) => {
+        accumulator = fn(accumulator, elem, i++)
+    })
+
+    return accumulator
+}
+
 export function promoteConsToList(cons) {
     let newList = listType()
     if (cons.type === TYPE.null) return newList
