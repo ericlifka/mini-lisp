@@ -18,7 +18,7 @@ const combineNumbers = (symbol, fn) => (params) => {
     return listReduce(params, (accum, elem) => {
         assert(
             accum.type === TYPE.number && elem.type === TYPE.number,
-            `Math function ${symbol} only works with numbers`
+            `Math function ${symbol} only works with numbers, got ${accum.type} and ${elem.type}`
         )
 
         return numberType(fn(accum.value, elem.value))

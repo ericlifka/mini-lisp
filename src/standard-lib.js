@@ -2,13 +2,13 @@ import { runCode } from './eval'
 import { checkExpressionReady, getExpression, newReader, parseToNextBreak } from './parser'
 
 const stdLib = `
-(defmacro ++ (param)
+(declare-macro ++ (param)
   \`(update ,param (+ ,param 1)))
 
-(defmacro -- (param)
+(declare-macro -- (param)
   \`(update ,param (- ,param 1)))
 
-(defmacro not-null (param)
+(declare-macro not-null (param)
   \`(not (is-null ,param)))
 `
 

@@ -4,7 +4,7 @@ import { listGetAtIndex, listLength } from '../types/list'
 import { nullType, specialFormType, tokenType } from '../types/types'
 import { runCode } from '../eval'
 
-export function setForm(argList, scope) {
+function declareForm(argList, scope) {
     let argCount = listLength(argList)
     let result = nullType()
 
@@ -20,4 +20,4 @@ export function setForm(argList, scope) {
     return result
 }
 
-export default [tokenType('set'), specialFormType('<set special form>', setForm)]
+export default [tokenType('declare'), specialFormType('(declare token value)', declareForm)]

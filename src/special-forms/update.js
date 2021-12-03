@@ -23,4 +23,4 @@ export function updateForm(argList, scope) {
     return result
 }
 
-export default [tokenType('update'), specialFormType('<update special form>', updateForm)]
+export default [tokenType('update'), specialFormType('(update token value)', updateForm)]

@@ -74,24 +74,25 @@ export const runnable = (runnableType) => (argsList, creationScope) => {
 
 export const runnableShorthandMacro = (type) => (argList) => {
     /*Converts: (function my-fn (...args) ...body)
-     * to:      (set my-fn (fn (...args) ...body))
+     * to:      (declare my-fn (fn my-fn (...args) ...body))
      *
      * Converts: (defmacro my-macro (...args) ...body)
-     * to:      (set my-macro (macro (...args) ...body))
+     * to:       (declare my-macro (macro my-macro (...args) ...body))
      */
     let nameToken = first(argList)
     let bodyList = rest(argList)
 
     assert(nameToken.type === TYPE.token, `First param to a runnable macro must be a name token`)
 
-    let runnable = cons(tokenType(type), bodyList)
+    let runnable = cons(tokenType(type), cons(nameToken, bodyList))
 
-    return toList(tokenType('set'), nameToken, runnable)
+    return toList(tokenType('declare'), nameToken, runnable)
 }
 
 export default [
     [tokenType('fn'), specialFormType('<fn special form>', runnable(functionType))],
     [tokenType('macro'), specialFormType('<macro special form>', runnable(macroType))],
     [tokenType('function'), macroType('<function macro>', runnableShorthandMacro('fn'))],
-    [tokenType('defmacro'), macroType('<defmacro macro>', runnableShorthandMacro('macro'))],
+    [tokenType('declare-fn'), macroType('<function macro>', runnableShorthandMacro('fn'))],
+    [tokenType('declare-macro'), macroType('<defmacro macro>', runnableShorthandMacro('macro'))],
 ]

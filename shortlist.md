@@ -1,12 +1,15 @@
 make most list functions work on vectors and hashmaps
-string utility functions
+     - have done some, but it's haphazardous, should make sure it's consistent
+
 macroexpand
 
 re-implement as many things with backquote and unquote macros as possible
-revisit math functions, it's annoying they don't take more numbers at once
 
 improve function doc strings for all builtins
+
 improved error messages
+    - when a module load fails because of bad syntax the error doesn't say that at all
+
 tail call recursion
 
 ---> macro
@@ -19,3 +22,15 @@ test suite in ulisp
 
 
 regex type?
+
+
+function symmetry:
+
+create: ✓
+map: ✓
+reduce: vector/hashmap
+filter: hashmap
+get: ✓
+set: ✓
+
+

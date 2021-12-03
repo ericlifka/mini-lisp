@@ -1,5 +1,5 @@
 import { functionType, tokenType, numberType, TYPE } from '../types/types'
-import { listFilter, listGetAtIndex, toList, toListWithLog } from '../types/list'
+import { listFilter, listGetAtIndex, toList } from '../types/list'
 import { vectorFilter } from '../types/vector'
 import { assert } from '../assert'
 import { isTruthy } from '../logic/booleans'

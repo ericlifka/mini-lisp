@@ -1,5 +1,5 @@
 import { assert } from '../assert'
-import { TYPE, consType, listType, nullType } from './types'
+import { TYPE, consType, listType, nullType, numberType } from './types'
 
 export function first(list) {
     assert(list.type === TYPE.list, `<fn first> expected list, recieved ${list.type}`)
@@ -39,15 +39,6 @@ export function toList(...args) {
     return promoteConsToList(consPtr)
 }
 
-export function toListWithLog(...args) {
-    console.log('toList - ', args)
-    let consPtr = nullType()
-    for (let i = args.length - 1; i >= 0; i--) {
-        consPtr = consType(args[i], consPtr)
-    }
-    return promoteConsToList(consPtr)
-}
-
 export function addToList(list, value) {
     // WARNING: must only ever be used on a list being constructed, either by the parser or by a function creating a new list copy
     if (list.head.type === TYPE.null) {
@@ -58,13 +49,33 @@ export function addToList(list, value) {
     }
 }
 
+export function listSet(list, index, value) {
+    assert(list.type === TYPE.list && index.type === TYPE.number, `Set requires a list and a number`)
+    let newList = listType()
+    let ptr = list.head
+    let i = 0
+
+    while (ptr.type !== TYPE.null) {
+        if (i === index) {
+            addToList(newList, value)
+        } else {
+            addToList(newList, ptr.value)
+        }
+
+        ptr = ptr.next
+        i++
+    }
+
+    return newList
+}
+
 export function listMap(list, fn) {
     let newList = listType()
     let ptr = list.head
     let i = 0
 
     while (ptr.type !== TYPE.null) {
-        addToList(newList, fn(ptr.value, i++))
+        addToList(newList, fn(ptr.value, numberType(i++)))
         ptr = ptr.next
     }
 

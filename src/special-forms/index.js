@@ -1,7 +1,7 @@
 import runnables from './runnables'
 import ifForm from './if'
 import letForm from './let'
-import setForm from './set'
+import declareForm from './declare'
 import updateForm from './update'
 import quoteForm from './quote'
 import moduleForm from './module'
@@ -17,7 +17,7 @@ export default [
     ...backQuoteForms,
     ifForm,
     letForm,
-    setForm,
+    declareForm,
     updateForm,
     quoteForm,
     moduleForm,
