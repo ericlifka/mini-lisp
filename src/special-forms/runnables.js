@@ -2,7 +2,7 @@ import { assert } from '../assert'
 import { runCode } from '../eval'
 import { printToString } from '../logger'
 import { createScope } from '../scope'
-import { listAllOneType, promoteConsToList, cons, first, rest, toList } from '../types/list'
+import { listAllOneType, promoteConsToList, cons, listFirst, listRest, toList } from '../types/list'
 import { tokenType, specialFormType, functionType, nullType, listType, TYPE, macroType } from '../types/types'
 
 export const runnable = (runnableType) => (argsList, creationScope) => {
@@ -79,8 +79,8 @@ export const runnableShorthandMacro = (type) => (argList) => {
      * Converts: (defmacro my-macro (...args) ...body)
      * to:       (declare my-macro (macro my-macro (...args) ...body))
      */
-    let nameToken = first(argList)
-    let bodyList = rest(argList)
+    let nameToken = listFirst(argList)
+    let bodyList = listRest(argList)
 
     assert(nameToken.type === TYPE.token, `First param to a runnable macro must be a name token`)
 

@@ -1,6 +1,6 @@
 import { printToString } from '../../src/logger'
 import { parseString } from '../../src/parser'
-import { listLength, listGetAtIndex, first, rest, cons, toList } from '../../src/types/list'
+import { listLength, listGetAtIndex, firstList, restList, cons, toList } from '../../src/types/list'
 import { listType, nullType, numberType, TYPE } from '../../src/types/types'
 
 describe('internal helpers', () => {
@@ -29,16 +29,16 @@ describe('internal helpers', () => {
     })
 
     test('first helper', () => {
-        expect(first(parseString('(1 2 3)'))).toHaveProperty('value', 1)
-        expect(first(parseString('()'))).toHaveProperty('type', TYPE.null)
-        expect(() => first(nullType())).toThrow()
+        expect(firstList(parseString('(1 2 3)'))).toHaveProperty('value', 1)
+        expect(firstList(parseString('()'))).toHaveProperty('type', TYPE.null)
+        expect(() => firstList(nullType())).toThrow()
     })
 
     test('rest helper', () => {
-        expect(printToString(rest(parseString('(1 2 3)')))).toBe('(2 3)')
-        expect(printToString(rest(parseString('(1)')))).toBe('()')
-        expect(printToString(rest(parseString('()')))).toBe('null')
-        expect(() => rest(nullType())).toThrow()
+        expect(printToString(restList(parseString('(1 2 3)')))).toBe('(2 3)')
+        expect(printToString(restList(parseString('(1)')))).toBe('()')
+        expect(printToString(restList(parseString('()')))).toBe('null')
+        expect(() => restList(nullType())).toThrow()
     })
 
     test('cons helper', () => {

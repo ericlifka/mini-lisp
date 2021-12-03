@@ -1,7 +1,7 @@
 import { assert } from '../assert'
 import { TYPE, consType, listType, nullType, numberType } from './types'
 
-export function first(list) {
+export function listFirst(list) {
     assert(list.type === TYPE.list, `<fn first> expected list, recieved ${list.type}`)
     if (list.head.type === TYPE.null) {
         return nullType()
@@ -10,7 +10,7 @@ export function first(list) {
     }
 }
 
-export function rest(list) {
+export function listRest(list) {
     assert(list.type === TYPE.list, `<fn rest> expected list, recieved ${list.type}`)
     if (list.head.type === TYPE.null) {
         return nullType()
@@ -87,7 +87,7 @@ export function listForEach(list, fn) {
     let i = 0
 
     while (ptr.type !== TYPE.null) {
-        fn(ptr.value, i++)
+        fn(ptr.value, numberType(i++))
         ptr = ptr.next
     }
 }
@@ -98,7 +98,7 @@ export function listFilter(list, fn) {
     let i = 0
 
     while (ptr.type !== TYPE.null) {
-        if (fn(ptr.value, i++)) {
+        if (fn(ptr.value, numberType(i++))) {
             addToList(newList, ptr.value)
         }
         ptr = ptr.next
@@ -107,13 +107,12 @@ export function listFilter(list, fn) {
     return newList
 }
 
-export function listReduce(list, fn) {
-    let accumulator = first(list)
-    let remaining = rest(list)
-    let i = 1
+export function listReduce(start, list, firstProvided, fn) {
+    let accumulator = start
+    let i = firstProvided ? 0 : 1
 
-    listForEach(remaining, (elem) => {
-        accumulator = fn(accumulator, elem, i++)
+    listForEach(list, (elem) => {
+        accumulator = fn(accumulator, elem, numberType(i++))
     })
 
     return accumulator

@@ -1,23 +1,53 @@
 import { assert } from '../assert'
-import { first, listForEach, listGetAtIndex, rest, toList, listReduce } from '../types/list'
+import { hashmapReduce } from '../types/hashmap'
+import { listGetAtIndex, toList, listReduce } from '../types/list'
 import { functionType, tokenType, TYPE } from '../types/types'
+import { vectorReduce } from '../types/vector'
+import { firstForm, restForm } from './getters'
 
-function reduceFunctionForm(params, scope) {
-    let fn = listGetAtIndex(params, 0)
-    let list = listGetAtIndex(params, 1)
+function runReduce(fn, start, iterable) {
+    assert(!(start.type === TYPE.null && iterable.type === TYPE.null), `TypeError: reduce must be supplied an iterable`)
+    let firstProvided = true
+    if (iterable.type === TYPE.null) {
+        // move params around so that start and iterable are the right things
+        iterable = restForm(toList(start))
+        start = firstForm(toList(start))
+        firstProvided = false
+    }
 
-    assert(fn.type === TYPE.function, `First parameter to reduce must be a function`)
-    if (list.type === TYPE.null) {
-        return functionType(`(reduce list)`, (params) => {
-            return listReduce(listGetAtIndex(params, 0), (accum, elem, index) => {
-                return fn.execute(toList(accum, elem, numberType(index), list))
-            })
-        })
-    } else {
-        return listReduce(list, (accum, elem, index) => {
-            return fn.execute(toList(accum, elem, numberType(index), list))
-        })
+    const reduceFn = (accum, val, key) => fn.execute(toList(accum, val, key, iterable))
+
+    switch (iterable.type) {
+        case TYPE.list:
+            return listReduce(start, iterable, firstProvided, reduceFn)
+
+        case TYPE.vector:
+            return vectorReduce(start, iterable, firstProvided, reduceFn)
+
+        case TYPE.hashmap:
+            return hashmapReduce(start, iterable, firstProvided, reduceFn)
+
+        default:
+            assert(false, `TypeError: reduce must be supplied an iteratable type`)
     }
 }
 
-export default [tokenType('reduce'), functionType(`(reduce fn list)`, reduceFunctionForm)]
+function reduceForm(params) {
+    let fn = listGetAtIndex(params, 0)
+    let start = listGetAtIndex(params, 1)
+    let iterable = listGetAtIndex(params, 2)
+    assert(fn.type === TYPE.function, `First parameter to reduce must be a function`)
+
+    if (start.type === TYPE.null && iterable.type === TYPE.null) {
+        return functionType(`(reduce start? iterable)`, (otherParams) => {
+            let start = listGetAtIndex(otherParams, 0)
+            let iterable = listGetAtIndex(otherParams, 1)
+
+            return runReduce(fn, start, iterable)
+        })
+    } else {
+        return runReduce(fn, start, iterable)
+    }
+}
+
+export default [tokenType('reduce'), functionType(`(reduce fn start? iterable)`, reduceForm)]

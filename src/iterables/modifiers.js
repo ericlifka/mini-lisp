@@ -1,7 +1,6 @@
-import { assert } from '../assert'
 import { listGetAtIndex } from '../types/list'
-import { functionType, nullType, tokenType, TYPE } from '../types/types'
-import { vectorFromList, vectorPush, vectorPop } from '../types/vector'
+import { functionType, tokenType } from '../types/types'
+import { vectorPush } from '../types/vector'
 
 export default [
     [
@@ -10,5 +9,6 @@ export default [
             vectorPush(listGetAtIndex(params, 0), listGetAtIndex(params, 1))
         ),
     ],
-    [tokenType('pop'), functionType(`(pop vector)`, (params) => vectorPop(listGetAtIndex(params, 0)))],
+    // need pattern matching for this form to work right
+    // [tokenType('pop'), functionType(`(pop vector)`, (params) => vectorPop(listGetAtIndex(params, 0)))],
 ]

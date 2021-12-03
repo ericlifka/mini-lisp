@@ -1,6 +1,6 @@
 import { assert } from '../assert'
-import { hashmapGet } from '../types/hashmap'
-import { vectorGet, vectorRest } from '../types/vector'
+import { hashmapGet, hashmapFirst } from '../types/hashmap'
+import { vectorFirst, vectorGet, vectorRest } from '../types/vector'
 import { listGetAtIndex, listLength, promoteConsToList } from '../types/list'
 import { functionType, listType, nullType, numberType, tokenType, TYPE } from '../types/types'
 
@@ -32,7 +32,7 @@ function getForm(params) {
     }
 }
 
-function firstFunctionForm(params) {
+export function firstForm(params) {
     let param = listGetAtIndex(params, 0)
     if (param.type === TYPE.list) {
         return listGetAtIndex(param, 0)
@@ -41,13 +41,15 @@ function firstFunctionForm(params) {
     } else if (param.type === TYPE.null) {
         return nullType()
     } else if (param.type === TYPE.vector) {
-        return vectorGet(param, numberType(0))
+        return vectorFirst(param)
+    } else if (param.type === TYPE.hashmap) {
+        return hashmapFirst(param)
     }
 
-    assert(false, `(first) requires a list or list like entity`)
+    assert(false, `(first) requires an iterable entity`)
 }
 
-function restFunctionForm(params) {
+export function restForm(params) {
     let param = listGetAtIndex(params, 0)
     if (param.type === TYPE.list) {
         if (param.head.type === TYPE.null) {
@@ -65,7 +67,7 @@ function restFunctionForm(params) {
     assert(false, `(rest) requires a list or list like entity`)
 }
 
-function lengthFunctionForm(params) {
+function lengthForm(params) {
     let param = listGetAtIndex(params, 0)
     if (param.type === TYPE.list) {
         return numberType(listLength(param))
@@ -82,7 +84,7 @@ function lengthFunctionForm(params) {
 
 export default [
     [tokenType('get'), functionType(`(get iterable key)`, getForm)],
-    [tokenType('first'), functionType(`(first list|vector)`, firstFunctionForm)],
-    [tokenType('rest'), functionType(`(rest list|vector)`, restFunctionForm)],
-    [tokenType('length'), functionType(`(length iterable)`, lengthFunctionForm)],
+    [tokenType('first'), functionType(`(first list|vector)`, firstForm)],
+    [tokenType('rest'), functionType(`(rest list|vector)`, restForm)],
+    [tokenType('length'), functionType(`(length iterable)`, lengthForm)],
 ]

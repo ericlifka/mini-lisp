@@ -1,5 +1,5 @@
 import { runCode } from './eval'
-import { checkExpressionReady, getExpression, newReader, parseToNextBreak } from './parser'
+import { checkExpressionReady, checkNeedsInput, getExpression, newReader, parseToNextBreak } from './parser'
 
 const stdLib = `
 (declare-macro ++ (param)
@@ -13,14 +13,13 @@ const stdLib = `
 `
 
 export function loadStandardLibIntoScope(scope) {
-    let statements = stdLib.split('\n\n')
-    statements.forEach((statement) => {
-        let reader = newReader(statement)
+    const reader = newReader(stdLib)
 
+    while (!checkNeedsInput(reader)) {
         parseToNextBreak(reader)
 
         if (checkExpressionReady(reader)) {
             runCode(getExpression(reader), scope)
         }
-    })
+    }
 }

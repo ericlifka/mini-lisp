@@ -1,5 +1,5 @@
 import { assert } from '../assert'
-import { listGetAtIndex, listLength, listReduce, listForEach } from '../types/list'
+import { listGetAtIndex, listLength, listReduce, listForEach, listFirst, listRest } from '../types/list'
 import { booleanType, tokenType, functionType, numberType, TYPE } from '../types/types'
 
 const compareNumbers = (fn) => (params) => {
@@ -15,7 +15,10 @@ const compareNumbers = (fn) => (params) => {
 }
 
 const combineNumbers = (symbol, fn) => (params) => {
-    return listReduce(params, (accum, elem) => {
+    let first = listFirst(params)
+    let rest = listRest(params)
+
+    return listReduce(first, rest, true, (accum, elem) => {
         assert(
             accum.type === TYPE.number && elem.type === TYPE.number,
             `Math function ${symbol} only works with numbers, got ${accum.type} and ${elem.type}`

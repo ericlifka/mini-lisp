@@ -1,6 +1,6 @@
-import { listGetAtIndex, listLength, listSet } from '../types/list'
-import { functionType, hashmapType, tokenType, TYPE } from '../types/types'
-import { hashmapGet, hashmapSet } from '../types/hashmap'
+import { listGetAtIndex, listSet } from '../types/list'
+import { functionType, tokenType, TYPE } from '../types/types'
+import { hashmapSet } from '../types/hashmap'
 import { assert } from '../assert'
 import { vectorSet } from '../types/vector'
 
@@ -21,7 +21,7 @@ function runSet(entity, key, value) {
 }
 
 function setForm(params) {
-    let entity = listGetAtIndex(params, 0)
+    let iterable = listGetAtIndex(params, 0)
     let key = listGetAtIndex(params, 1)
     let value = listGetAtIndex(params, 2)
 
@@ -30,10 +30,10 @@ function setForm(params) {
             let key = listGetAtIndex(params, 0)
             let value = listGetAtIndex(params, 1)
 
-            return runSet(entity, key, value)
+            return runSet(iterable, key, value)
         })
     } else {
-        return runSet(entity, key, value)
+        return runSet(iterable, key, value)
     }
 }
 

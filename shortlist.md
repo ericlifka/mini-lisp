@@ -1,6 +1,3 @@
-make most list functions work on vectors and hashmaps
-     - have done some, but it's haphazardous, should make sure it's consistent
-
 macroexpand
 
 re-implement as many things with backquote and unquote macros as possible
@@ -22,15 +19,3 @@ test suite in ulisp
 
 
 regex type?
-
-
-function symmetry:
-
-create: ✓
-map: ✓
-reduce: vector/hashmap
-filter: hashmap
-get: ✓
-set: ✓
-
-

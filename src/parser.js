@@ -1,5 +1,4 @@
 import { assert } from './assert'
-import { hashmapSet } from './types/hashmap'
 import { addToList } from './types/list'
 import { listType, stringType, tokenType, TYPE, nullType } from './types/types'
 
@@ -105,16 +104,6 @@ const checkForConversions = (entity) => {
         } else if (entity.value === 'null') {
             entity.type = TYPE.null
             delete entity.value
-        }
-    } else if (entity.type === TYPE.hashmap) {
-        let pairs = entity.keys
-        entity.keys = []
-
-        for (let i = 0; i < pairs.length; i += 2) {
-            let key = pairs[i]
-            let value = pairs[i + 1] || nullType()
-
-            hashmapSet(entity, key, value)
         }
     }
 

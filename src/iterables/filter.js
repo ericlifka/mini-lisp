@@ -1,33 +1,42 @@
-import { functionType, tokenType, numberType, TYPE } from '../types/types'
+import { functionType, tokenType, TYPE } from '../types/types'
 import { listFilter, listGetAtIndex, toList } from '../types/list'
 import { vectorFilter } from '../types/vector'
 import { assert } from '../assert'
 import { isTruthy } from '../logic/booleans'
+import { hashmapFilter } from '../types/hashmap'
 
 function runFilter(fn, iterable) {
-    if (iterable.type === TYPE.list) {
-        return listFilter(iterable, (val, index) => {
-            return isTruthy(fn.execute(toList(val, numberType(index))))
-        })
-    } else if (iterable.type === TYPE.vector) {
-        return vectorFilter(iterable, (val, index) => {
-            return isTruthy(fn.execute(toList(val, numberType(index), iterable)))
-        })
-    }
+    const filterFn = (val, key) => isTruthy(fn.execute(toList(val, key, iterable)))
 
-    assert(false, `Second parameter to filter must be an iterable type`)
+    switch (iterable.type) {
+        case TYPE.list:
+            return listFilter(iterable, filterFn)
+
+        case TYPE.vector:
+            return vectorFilter(iterable, filterFn)
+
+        case TYPE.hashmap:
+            return hashmapFilter(iterable, filterFn)
+
+        default:
+            assert(false, `Second parameter to filter must be an iterable type`)
+    }
 }
 
 function filterFunction(params) {
     let fn = listGetAtIndex(params, 0)
-    let list = listGetAtIndex(params, 1)
-
+    let iterable = listGetAtIndex(params, 1)
     assert(fn.type === TYPE.function, `First parameter to filter must be a function`)
-    if (list.type === TYPE.null) {
-        return functionType(`(filter list|vector)`, (otherParams) => runFilter(fn, listGetAtIndex(otherParams, 0)))
+
+    if (iterable.type === TYPE.null) {
+        return functionType(`(filter iterable)`, (params) => {
+            let iterable = listGetAtIndex(params, 0)
+
+            return runFilter(fn, iterable)
+        })
     } else {
-        return runFilter(fn, list)
+        return runFilter(fn, iterable)
     }
 }
 
-export default [tokenType('filter'), functionType(`(filter fn list|vector)`, filterFunction)]
+export default [tokenType('filter'), functionType(`(filter fn iterable)`, filterFunction)]

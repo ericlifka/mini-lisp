@@ -5,28 +5,36 @@ import { vectorMap } from '../types/vector'
 import { hashmapMap } from '../types/hashmap'
 
 function runMap(fn, iterable) {
-    let mapper = (val, key) => fn.execute(toList(val, key, iterable))
+    let mapFn = (val, key) => fn.execute(toList(val, key, iterable))
 
-    if (iterable.type === TYPE.list) {
-        return listMap(iterable, mapper)
-    } else if (iterable.type === TYPE.vector) {
-        return vectorMap(iterable, mapper)
-    } else if (iterable.type === TYPE.hashmap) {
-        return hashmapMap(iterable, mapper)
+    switch (iterable.type) {
+        case TYPE.list:
+            return listMap(iterable, mapFn)
+
+        case TYPE.vector:
+            return vectorMap(iterable, mapFn)
+
+        case TYPE.hashmap:
+            return hashmapMap(iterable, mapFn)
+
+        default:
+            assert(false, `Second parameter to map must be an iteratable type`)
     }
-
-    assert(false, `Second parameter to map must be an iteratable type`)
 }
 
 function mapFunctionForm(params) {
     let fn = listGetAtIndex(params, 0)
-    let list = listGetAtIndex(params, 1)
+    let iterable = listGetAtIndex(params, 1)
     assert(fn.type === TYPE.function, `First parameter to map must be a function`)
 
-    if (list.type === TYPE.null) {
-        return functionType(`(map iterable)`, (otherParams) => runMap(fn, listGetAtIndex(otherParams, 0)))
+    if (iterable.type === TYPE.null) {
+        return functionType(`(map iterable)`, (params) => {
+            let iterable = listGetAtIndex(params, 0)
+
+            return runMap(fn, iterable)
+        })
     } else {
-        return runMap(fn, list)
+        return runMap(fn, iterable)
     }
 }
 

@@ -1,7 +1,6 @@
 import { listGetAtIndex, listLength } from '../types/list'
 import { functionType, hashmapType, nullType, tokenType, TYPE } from '../types/types'
-import { hashmapGet, hashmapSet } from '../types/hashmap'
-import { assert } from '../assert'
+import { volatileHashmapSet } from '../types/hashmap'
 import { vectorFromList } from '../types/vector'
 
 function consForm(params) {
@@ -26,7 +25,7 @@ function hashmapForm(params) {
         let key = paramVector.value[i]
         let value = paramVector.value[i + 1] || nullType()
 
-        hashmapSet(hashmap, key, value)
+        volatileHashmapSet(hashmap, key, value)
     }
 
     return hashmap

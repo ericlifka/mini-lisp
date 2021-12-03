@@ -9,7 +9,7 @@ export function vectorFromList(list) {
 
     let ptr = list.head
     while (ptr.type !== TYPE.null) {
-        vectorPush(vector, ptr.value)
+        vector.value.push(ptr.value)
         ptr = ptr.next
     }
 
@@ -23,21 +23,32 @@ export function vectorGet(vector, index) {
 
 export function vectorSet(vector, index, value) {
     assert(vector.type === TYPE.vector && index.type === TYPE.number, `TypeError: Set expects a vector and an index`)
-    vector.value[index.value] = value
+
+    let newVector = vectorType([...vector.value])
+    for (let i = newVector.value.length; i < index.value; i++) {
+        newVector.value[i] = nullType()
+    }
+    newVector.value[index.value] = value
     return vector
 }
 
 export function vectorPush(vector, item) {
     assert(vector.type === TYPE.vector, `TypeError: Push can only operate on a vector`)
 
-    vector.value.push(item)
-    return vector
+    return vectorType([item, ...vector.value])
 }
 
-export function vectorPop(vector) {
-    assert(vector.type === TYPE.vector, `TypeError: Pop can only operate on a vector`)
+// can't implement this properly until I have destructuring for getting both values at once
+// export function vectorPop(vector) {
+//     assert(vector.type === TYPE.vector, `TypeError: Pop can only operate on a vector`)
 
-    return vector.value.pop()
+//     return vector.value.pop()
+// }
+
+export function vectorFirst(vector) {
+    assert(vector.type === TYPE.vector, `TypeError: First can only operate on a vetor`)
+
+    return vector.value[0] || nullType()
 }
 
 export function vectorRest(vector) {
@@ -45,10 +56,20 @@ export function vectorRest(vector) {
     return vectorType(vector.value.slice(1))
 }
 
+export function vectorForEach(vector, fn) {
+    assert(vector.type === TYPE.vector, `TypeError: foreach-vector can only operate on vectors`)
+
+    vector.value.forEach((elem, i) => fn(elem, numberType(i)))
+}
+
 export function vectorMap(vector, fn) {
     assert(vector.type === TYPE.vector, `TypeError: map-vector can only operate on vectors`)
 
-    return vectorType(vector.value.map((elem, i) => fn(elem, numberType(i))))
+    return vectorType(
+        vector.value.map((elem, i) => {
+            return fn(elem, numberType(i))
+        })
+    )
 }
 
 export function vectorFilter(vector, fn) {
@@ -56,7 +77,18 @@ export function vectorFilter(vector, fn) {
 
     return vectorType(
         vector.value.filter((elem, i) => {
-            return fn(elem, i)
+            return fn(elem, numberType(i))
         })
     )
+}
+
+export function vectorReduce(start, vector, firstProvided, fn) {
+    let accumulator = start
+    let i = firstProvided ? 0 : 1
+
+    vectorForEach(vector, (elem) => {
+        accumulator = fn(accumulator, elem, numberType(i++))
+    })
+
+    return accumulator
 }
