@@ -26,4 +26,4 @@ function condSpecialForm(params, scope) {
     return nullType()
 }
 
-export default [tokenType('cond'), specialFormType(`(cond ...)`, condSpecialForm)]
+export default [tokenType('cond'), specialFormType(`(cond (bool1 statement1) (bool2 statement2) ...)`, condSpecialForm)]

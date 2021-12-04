@@ -13,7 +13,7 @@ export function listFirst(list) {
 export function listRest(list) {
     assert(list.type === TYPE.list, `<fn rest> expected list, recieved ${list.type}`)
     if (list.head.type === TYPE.null) {
-        return nullType()
+        return listType()
     } else {
         return promoteConsToList(list.head.next)
     }

@@ -10,6 +10,19 @@ const stdLib = `
 
 (declare-macro not-null (param)
   \`(not (is-null ,param)))
+
+(function matrix-add (left right)
+  (map 
+    (fn (l i) (let (r (get right i))
+      (cond
+        ((and (is-vector l) (is-vector r))
+         (matrix-add l r))
+
+        ((and (is-number l) (is-number r))
+         (+ l r))
+
+        (true (throw "matrix-add encountered mismatched types" l r)))))
+    left))
 `
 
 export function loadStandardLibIntoScope(scope) {

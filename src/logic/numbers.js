@@ -1,4 +1,5 @@
 import { assert } from '../assert'
+import { printToString } from '../logger'
 import { listGetAtIndex, listLength, listReduce, listForEach, listFirst, listRest } from '../types/list'
 import { booleanType, tokenType, functionType, numberType, TYPE } from '../types/types'
 
@@ -21,7 +22,9 @@ const combineNumbers = (symbol, fn) => (params) => {
     return listReduce(first, rest, true, (accum, elem) => {
         assert(
             accum.type === TYPE.number && elem.type === TYPE.number,
-            `Math function ${symbol} only works with numbers, got ${accum.type} and ${elem.type}`
+            `Math function ${symbol} only works with numbers, got ${accum.type} and ${elem.type}\n${printToString(
+                accum
+            )}\n${printToString(elem)}`
         )
 
         return numberType(fn(accum.value, elem.value))

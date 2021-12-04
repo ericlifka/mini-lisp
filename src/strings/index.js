@@ -1,5 +1,6 @@
 import { assert } from '../assert'
-import { listGetAtIndex } from '../types/list'
+import { printToString } from '../logger'
+import { listGetAtIndex, toList } from '../types/list'
 import { functionType, nullType, numberType, stringType, tokenType, TYPE, vectorType } from '../types/types'
 
 function executeSplit(splitter, str) {
@@ -20,6 +21,41 @@ function stringSplitForm(params) {
         })
     } else {
         return executeSplit(splitter, str)
+    }
+}
+
+function executeJoin(joiner, vector) {
+    return stringType(
+        vector.value
+            .map((elem) => toStringForm(toList(elem)))
+            .map((elem) => elem.value)
+            .join(joiner.value)
+    )
+}
+
+function stringJoinForm(params) {
+    let joiner = listGetAtIndex(params, 0)
+    let vector = listGetAtIndex(params, 1)
+    assert(joiner.type === TYPE.string, `join: first argument must be a string to join elements with`)
+
+    if (vector.type === TYPE.null) {
+        return functionType(`(join vector)`, (params) => {
+            let vector = listGetAtIndex(params, 0)
+
+            return executeJoin(joiner, vector)
+        })
+    } else {
+        return executeJoin(joiner, vector)
+    }
+}
+
+function toStringForm(params) {
+    let entity = listGetAtIndex(params, 0)
+
+    if (entity.type === TYPE.string) {
+        return entity
+    } else {
+        return stringType(printToString(entity))
     }
 }
 
@@ -44,6 +80,8 @@ function trimForm(params) {
 
 export default [
     [tokenType('split'), functionType(`(split str|regex str)`, stringSplitForm)],
+    [tokenType('join'), functionType(`(join str vector)`, stringJoinForm)],
+    [tokenType('to-string'), functionType(`(to-string entity)`, toStringForm)],
     [tokenType('to-number'), functionType(`(to-number string)`, toNumberForm)],
     [tokenType('trim'), functionType(`(trim string)`, trimForm)],
 ]

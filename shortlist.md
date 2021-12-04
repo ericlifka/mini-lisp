@@ -1,3 +1,12 @@
+pattern matching for parameters and assignments
+
+matrix math:
+  add
+  multiply
+  dot product
+
+some method of catching errors
+
 macroexpand
 
 re-implement as many things with backquote and unquote macros as possible
