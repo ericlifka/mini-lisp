@@ -1,7 +1,7 @@
 import { assert } from '../assert'
-import { hashmapGet, hashmapFirst } from '../types/hashmap'
+import { hashmapGet, hashmapFirst, hashmapRest } from '../types/hashmap'
 import { vectorFirst, vectorGet, vectorRest } from '../types/vector'
-import { listGetAtIndex, listLength, promoteConsToList } from '../types/list'
+import { listGetAtIndex, listLength, promoteConsToList, toList } from '../types/list'
 import { functionType, listType, nullType, numberType, tokenType, TYPE } from '../types/types'
 
 function runGet(entity, key) {
@@ -62,9 +62,18 @@ export function restForm(params) {
         return listType()
     } else if (param.type === TYPE.vector) {
         return vectorRest(param)
+    } else if (param.type === TYPE.hashmap) {
+        return hashmapRest(param)
     }
 
     assert(false, `(rest) requires a list or list like entity`)
+}
+
+export function lastForm(params) {
+    let param = listGetAtIndex(params, 0)
+    let length = lengthForm(params)
+
+    return getForm(toList(param, numberType(length.value - 1)))
 }
 
 function lengthForm(params) {
@@ -84,7 +93,8 @@ function lengthForm(params) {
 
 export default [
     [tokenType('get'), functionType(`(get iterable key)`, getForm)],
-    [tokenType('first'), functionType(`(first list|vector)`, firstForm)],
-    [tokenType('rest'), functionType(`(rest list|vector)`, restForm)],
+    [tokenType('first'), functionType(`(first iterable)`, firstForm)],
+    [tokenType('rest'), functionType(`(rest iterable)`, restForm)],
+    [tokenType('last'), functionType(`(last iterable)`, lastForm)],
     [tokenType('length'), functionType(`(length iterable)`, lengthForm)],
 ]

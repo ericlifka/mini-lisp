@@ -39,4 +39,7 @@ function filterFunction(params) {
     }
 }
 
-export default [tokenType('filter'), functionType(`(filter fn iterable)`, filterFunction)]
+export default [
+    [tokenType('filter'), functionType(`(filter fn iterable)`, filterFunction)],
+    [tokenType('identity'), functionType(`(identity entity)`, (params) => listGetAtIndex(params, 0))],
+]

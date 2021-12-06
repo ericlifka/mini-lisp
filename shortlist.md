@@ -1,3 +1,5 @@
+,@ - splice operator for quasi-quotes
+
 pattern matching for parameters and assignments
 
 matrix math:
@@ -28,3 +30,12 @@ test suite in ulisp
 
 
 regex type?
+
+switch statement
+for loop 
+
+sorting for iterables
+
+comment strings for documenting functions
+
+some kind of return keyword, possibly through captured errors

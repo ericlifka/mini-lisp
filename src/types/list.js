@@ -1,5 +1,6 @@
 import { assert } from '../assert'
 import { TYPE, consType, listType, nullType, numberType } from './types'
+import { vectorFromList } from './vector'
 
 export function listFirst(list) {
     assert(list.type === TYPE.list, `<fn first> expected list, recieved ${list.type}`)
@@ -37,6 +38,14 @@ export function toList(...args) {
         consPtr = consType(args[i], consPtr)
     }
     return promoteConsToList(consPtr)
+}
+
+export function listFromVector(vector) {
+    let list = listType()
+    vector.value.forEach((entity) => {
+        addToList(list, entity)
+    })
+    return list
 }
 
 export function addToList(list, value) {
@@ -163,4 +172,13 @@ export function listGetAtIndex(list, index) {
     }
 
     return nullType()
+}
+
+export function listSort(list, sorter) {
+    assert(list.type === TYPE.list, `TypeError: list-sort can only work on a list`)
+
+    let vector = vectorFromList(list)
+    vector.value.sort(sorter)
+
+    return listFromVector(vector)
 }

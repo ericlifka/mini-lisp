@@ -92,3 +92,12 @@ export function vectorReduce(start, vector, firstProvided, fn) {
 
     return accumulator
 }
+
+export function vectorSort(vector, sorter) {
+    assert(vector.type === TYPE.vector, `TypeError: sort-vector can only operate on vectors`)
+
+    let newVector = vectorType([...vector.value])
+    newVector.value.sort(sorter)
+
+    return newVector
+}

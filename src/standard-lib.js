@@ -2,6 +2,9 @@ import { runCode } from './eval'
 import { checkExpressionReady, checkNeedsInput, getExpression, newReader, parseToNextBreak } from './parser'
 
 const stdLib = `
+(declare-macro != (left right)
+  \`(not (== ,left ,right)))
+
 (declare-macro ++ (param)
   \`(update ,param (+ ,param 1)))
 

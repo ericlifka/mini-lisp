@@ -104,3 +104,15 @@ export function hashmapReduce(start, hashmap, firstProvided, fn) {
 
     return accumulator
 }
+
+export function hashmapSort(hashmap, sorter) {
+    assert(hashmap.type === TYPE.hashmap, `TypeError: sort-hashmap can only operate on hashmaps`)
+
+    let newHashmap = hashmapMap(hashmap, (entity) => entity)
+
+    newHashmap.keys.sort((key1, key2) => {
+        return sorter(hashmapGet(newHashmap, key1), hashmapGet(newHashmap, key2), key1, key2)
+    })
+
+    return newHashmap
+}
