@@ -1,4 +1,5 @@
 import { assert } from '../assert'
+import { matchListParameter } from '../destructuring'
 import { runCode } from '../eval'
 import { printToString } from '../logger'
 import { createScope } from '../scope'
@@ -14,60 +15,29 @@ export const runnable = (runnableType) => (argsList, creationScope) => {
     }
     assert(TYPE.list === first.value.type, `<runnable: must provide parameter list>`)
 
-    let parameterList = first.value
+    let params = first.value
     let bodyPtr = first.next
-    assert(listAllOneType(parameterList, TYPE.token), `<runnable: only tokens can be provided as parameters>`)
 
-    let runnableEntity = runnableType(
-        `(${name ? name.value : 'anonymous'} ${printToString(parameterList)} ...)`,
-        (params) => {
-            let scopeParams = [[tokenType('recur'), runnableEntity]]
-            if (name && name.value !== 'recur') {
-                scopeParams.push([name, runnableEntity])
-            }
+    let runnableEntity = runnableType(`(${name ? name.value : 'anonymous'} ${printToString(params)} ...)`, (args) => {
+        let scopeParams = matchListParameter(params, args)
 
-            let tokensPtr = parameterList.head
-            let valuesPtr = params.head
-            while (tokensPtr.type !== TYPE.null) {
-                let currentToken = tokensPtr.value
-                let value
-
-                if (currentToken.value.slice(0, 3) === '...') {
-                    // this is a rest param
-                    assert(
-                        tokensPtr.next.type === TYPE.null,
-                        `<runnable: ...spread parameter can only be at end of parameters list`
-                    )
-
-                    currentToken = tokenType(currentToken.value.slice(3))
-                    value = valuesPtr.type === TYPE.null ? listType() : promoteConsToList(valuesPtr)
-
-                    valuesPtr = nullType() // move pointer to end of list because all params have been consumed
-                } else {
-                    value = valuesPtr.type === TYPE.null ? nullType() : valuesPtr.value
-                }
-
-                scopeParams.push([currentToken, value])
-
-                tokensPtr = tokensPtr.next
-                if (valuesPtr.type !== TYPE.null) {
-                    valuesPtr = valuesPtr.next
-                }
-            }
-
-            let functionScope = createScope(scopeParams, creationScope)
-            let body = bodyPtr
-            let evalResult
-
-            while (body.type !== TYPE.null) {
-                evalResult = runCode(body.value, functionScope)
-
-                body = body.next
-            }
-
-            return evalResult
+        scopeParams.push([tokenType('recur'), runnableEntity])
+        if (name && name.value !== 'recur') {
+            scopeParams.push([name, runnableEntity])
         }
-    )
+
+        let functionScope = createScope(scopeParams, creationScope)
+        let body = bodyPtr
+        let evalResult
+
+        while (body.type !== TYPE.null) {
+            evalResult = runCode(body.value, functionScope)
+
+            body = body.next
+        }
+
+        return evalResult
+    })
 
     return runnableEntity
 }

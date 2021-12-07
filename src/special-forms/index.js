@@ -1,29 +1,31 @@
-import runnables from './runnables'
-import ifForm from './if'
-import letForm from './let'
-import declareForm from './declare'
-import updateForm from './update'
-import quoteForm from './quote'
-import moduleForm from './module'
-import importForm from './import'
-import doForm from './do'
-import condForm from './cond'
-import whileForm from './while'
-import evalForm from './eval'
+import applyForm from './apply'
 import backQuoteForms from './back-quote'
+import condForm from './cond'
+import declareForm from './declare'
+import doForm from './do'
+import evalForm from './eval'
+import ifForm from './if'
+import importForm from './import'
+import letForm from './let'
+import moduleForm from './module'
+import quoteForm from './quote'
+import runnables from './runnables'
+import updateForm from './update'
+import whileForm from './while'
 
 export default [
-    ...runnables,
+    applyForm,
     ...backQuoteForms,
-    ifForm,
-    letForm,
-    declareForm,
-    updateForm,
-    quoteForm,
-    moduleForm,
-    importForm,
-    doForm,
     condForm,
-    whileForm,
+    declareForm,
+    doForm,
     evalForm,
+    ifForm,
+    importForm,
+    letForm,
+    moduleForm,
+    quoteForm,
+    ...runnables,
+    updateForm,
+    whileForm,
 ]
