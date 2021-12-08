@@ -99,6 +99,8 @@ export function listForEach(list, fn) {
         fn(ptr.value, numberType(i++))
         ptr = ptr.next
     }
+
+    return nullType()
 }
 
 export function listFilter(list, fn) {

@@ -3,6 +3,7 @@ import { hashmapGet, hashmapFirst, hashmapRest } from '../types/hashmap'
 import { vectorFirst, vectorGet, vectorRest } from '../types/vector'
 import { listGetAtIndex, listLength, promoteConsToList, toList } from '../types/list'
 import { functionType, listType, nullType, numberType, tokenType, TYPE } from '../types/types'
+import { printToString } from '../logger'
 
 function runGet(entity, key) {
     switch (entity.type) {
@@ -88,7 +89,7 @@ function lengthForm(params) {
         return numberType(param.keys.length)
     }
 
-    assert(false, `(length) only works on iterables`)
+    assert(false, `TypeError: length expected iterable, got ${param.type}:${printToString(param)}`)
 }
 
 export default [

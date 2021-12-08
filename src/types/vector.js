@@ -60,6 +60,8 @@ export function vectorForEach(vector, fn) {
     assert(vector.type === TYPE.vector, `TypeError: foreach-vector can only operate on vectors`)
 
     vector.value.forEach((elem, i) => fn(elem, numberType(i)))
+
+    return nullType()
 }
 
 export function vectorMap(vector, fn) {

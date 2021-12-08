@@ -1,13 +1,11 @@
 import { assert } from './assert'
 import { printToString } from './logger'
-import { hashmapForEach, hashmapGet } from './types/hashmap'
+import { hashmapGet } from './types/hashmap'
 import { addToList, listFirst, listFromVector, listRest, promoteConsToList } from './types/list'
-import { listType, nullType, TYPE } from './types/types'
+import { listType, nullType, tokenType, TYPE } from './types/types'
 import { vectorFromList } from './types/vector'
 
 export function matchParameter(param, arg) {
-    console.log('matchParameter', param, arg)
-
     if (param.type === TYPE.token) {
         return [[param, arg]]
     }
@@ -74,7 +72,6 @@ function matchHashmap(paramsList, argsHashmap) {
 }
 
 export function matchListParameter(paramsList, argsList) {
-    console.log('matchListParameter', paramsList, argsList)
     let paramPtr = paramsList.head
     let argPtr = argsList.head
     let scopeValues = []
@@ -84,8 +81,10 @@ export function matchListParameter(paramsList, argsList) {
         let arg = argPtr.type === TYPE.null ? nullType() : argPtr.value
 
         if (param.type === TYPE.token && param.value.slice(0, 3) === '...') {
-            param.value = param.value.slice(3) // cut off '...' from token name
-            scopeValues.push([param, promoteConsToList(argPtr)])
+            let argList = promoteConsToList(argPtr)
+            let restParam = tokenType(param.value.slice(3)) // cut off '...' from token name
+
+            scopeValues.push([restParam, argList])
             argPtr = nullType()
         } else {
             scopeValues = scopeValues.concat(matchParameter(param, arg))
@@ -98,4 +97,18 @@ export function matchListParameter(paramsList, argsList) {
     }
 
     return scopeValues
+}
+
+export function arrayOfArguments(argList, expected) {
+    let toReturn = []
+    let ptr = argList.head
+    for (let i = 0; i < expected; i++) {
+        if (ptr.type === TYPE.null) {
+            toReturn.push(nullType())
+        } else {
+            toReturn.push(ptr.value)
+            ptr = ptr.next
+        }
+    }
+    return toReturn
 }
