@@ -84,6 +84,16 @@ export function vectorFilter(vector, fn) {
     )
 }
 
+export function vectorFind(vector, fn) {
+    assert(vector.type === TYPE.vector, `TypeError: find-vector can only operate on vectors`)
+
+    for (let i = 0; i < vector.value.length; i++) {
+        if (fn(vector.value[i], numberType(i))) {
+            return vector.value[i]
+        }
+    }
+}
+
 export function vectorReduce(start, vector, firstProvided, fn) {
     let accumulator = start
     let i = firstProvided ? 0 : 1

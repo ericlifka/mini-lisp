@@ -2,7 +2,7 @@ import { assert } from '../assert'
 import { hashmapGet, hashmapFirst, hashmapRest } from '../types/hashmap'
 import { vectorFirst, vectorGet, vectorRest } from '../types/vector'
 import { listGetAtIndex, listLength, promoteConsToList, toList } from '../types/list'
-import { functionType, listType, nullType, numberType, tokenType, TYPE } from '../types/types'
+import { functionType, listType, nullType, numberType, stringType, tokenType, TYPE } from '../types/types'
 import { printToString } from '../logger'
 
 function runGet(entity, key) {
@@ -45,6 +45,8 @@ export function firstForm(params) {
         return vectorFirst(param)
     } else if (param.type === TYPE.hashmap) {
         return hashmapFirst(param)
+    } else if (param.type === TYPE.string) {
+        return stringType(param.value[0] || nullType())
     }
 
     assert(false, `(first) requires an iterable entity`)
@@ -65,6 +67,8 @@ export function restForm(params) {
         return vectorRest(param)
     } else if (param.type === TYPE.hashmap) {
         return hashmapRest(param)
+    } else if (param.type === TYPE.string) {
+        return stringType(param.value.slice(1))
     }
 
     assert(false, `(rest) requires a list or list like entity`)
@@ -87,6 +91,8 @@ function lengthForm(params) {
         return numberType(param.value.length)
     } else if (param.type === TYPE.hashmap) {
         return numberType(param.keys.length)
+    } else if (param.type === TYPE.string) {
+        return numberType(param.value.length)
     }
 
     assert(false, `TypeError: length expected iterable, got ${param.type}:${printToString(param)}`)

@@ -93,9 +93,15 @@ function matrixGetForm(params) {
         matrix.type === TYPE.vector && x.type === TYPE.number && y.type === TYPE.number,
         `TypeError: matrix-get expects matrix number number for params`
     )
-    assert(y.value >= 0 && y.value < matrix.value.length, `Error: matrix-get y out of bounds`)
+    assert(
+        y.value >= 0 && y.value < matrix.value.length,
+        `Error: matrix-get y out of bounds ${y.value}:${matrix.value.length}`
+    )
     let vector = matrix.value[y.value]
-    assert(x.value >= 0 && x.value < vector.value.length, `Error: matrix-get x out of bounds`)
+    assert(
+        x.value >= 0 && x.value < vector.value.length,
+        `Error: matrix-get x out of bounds ${x.value}:${vector.value.length}`
+    )
 
     return vector.value[x.value]
 }

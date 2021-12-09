@@ -1,7 +1,7 @@
 import { assert } from '../assert'
 import { hashmapReduce } from '../types/hashmap'
 import { listGetAtIndex, toList, listReduce } from '../types/list'
-import { functionType, tokenType, TYPE } from '../types/types'
+import { functionType, tokenType, stringType, vectorType, TYPE } from '../types/types'
 import { vectorReduce } from '../types/vector'
 import { firstForm, restForm } from './getters'
 
@@ -26,6 +26,14 @@ function runReduce(fn, start, iterable) {
 
         case TYPE.hashmap:
             return hashmapReduce(start, iterable, firstProvided, reduceFn)
+
+        case TYPE.string:
+            // convert to vector of characters
+            let vector = vectorType(iterable.value.split('').map((char) => stringType(char)))
+            // apply reducer
+            let result = vectorReduce(start, vector, firstProvided, reduceFn)
+            // send back results
+            return result
 
         default:
             assert(false, `TypeError: reduce must be supplied an iteratable type`)

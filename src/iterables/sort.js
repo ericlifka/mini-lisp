@@ -1,7 +1,7 @@
 import { assert } from '../assert'
 import { hashmapSort } from '../types/hashmap'
 import { listGetAtIndex, listSort, toList } from '../types/list'
-import { functionType, numberType, tokenType, TYPE } from '../types/types'
+import { functionType, numberType, stringType, tokenType, TYPE, vectorType } from '../types/types'
 import { vectorSort } from '../types/vector'
 
 function executeSort(fn, iterable) {
@@ -27,6 +27,14 @@ function executeSort(fn, iterable) {
 
         case TYPE.hashmap:
             return hashmapSort(iterable, sorter)
+
+        case TYPE.string:
+            // convert to vector of characters
+            let vector = vectorType(iterable.value.split('').map((char) => stringType(char)))
+            // apply sorting
+            let sorted = vectorSort(vector, sorter)
+            // convert back to a string
+            return stringType(sorted.value.map((char) => char.value).join(''))
 
         default:
             assert(false, `TypeError: sort can only work on iterable types`)

@@ -1,9 +1,8 @@
 ,@ - splice operator for quasi-quotes
 
-pattern matching for parameters and assignments
+move string into iterables group
 
-matrix math:
-  add
+more matrix math:
   multiply
   dot product
 
@@ -33,8 +32,6 @@ regex type?
 
 switch statement
 for loop 
-
-sorting for iterables
 
 comment strings for documenting functions
 

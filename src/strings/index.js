@@ -1,7 +1,17 @@
 import { assert } from '../assert'
+import { arrayOfArguments } from '../destructuring'
 import { printToString } from '../logger'
 import { listGetAtIndex, toList } from '../types/list'
-import { functionType, nullType, numberType, stringType, tokenType, TYPE, vectorType } from '../types/types'
+import {
+    booleanType,
+    functionType,
+    nullType,
+    numberType,
+    stringType,
+    tokenType,
+    TYPE,
+    vectorType,
+} from '../types/types'
 
 function executeSplit(splitter, str) {
     assert(str.type === TYPE.string, `split: arguments must be strings`)
@@ -78,10 +88,18 @@ function trimForm(params) {
     return stringType(string.value.trim())
 }
 
+function strContainsForm(params) {
+    let [str1, str2] = arrayOfArguments(params, 2)
+    assert(str1.type === TYPE.string && str2.type === TYPE.string, `TypeError: str-contains requires two strings`)
+
+    return booleanType(str1.value.indexOf(str2.value) > -1)
+}
+
 export default [
     [tokenType('split'), functionType(`(split str|regex str)`, stringSplitForm)],
     [tokenType('join'), functionType(`(join str vector)`, stringJoinForm)],
     [tokenType('to-string'), functionType(`(to-string entity)`, toStringForm)],
     [tokenType('to-number'), functionType(`(to-number string)`, toNumberForm)],
     [tokenType('trim'), functionType(`(trim string)`, trimForm)],
+    [tokenType('str-contains'), functionType(`(str-contains str1 str2)`, strContainsForm)],
 ]

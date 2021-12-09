@@ -1,8 +1,8 @@
 import { assert } from '../assert'
-import { listForEach, listGetAtIndex, listMap, toList } from '../types/list'
-import { functionType, tokenType, numberType, TYPE } from '../types/types'
-import { vectorForEach, vectorMap } from '../types/vector'
-import { hashmapForEach, hashmapMap } from '../types/hashmap'
+import { listForEach, listGetAtIndex, toList } from '../types/list'
+import { functionType, tokenType, stringType, vectorType, TYPE, nullType } from '../types/types'
+import { vectorForEach } from '../types/vector'
+import { hashmapForEach } from '../types/hashmap'
 
 function runForeach(fn, iterable) {
     let foreachFn = (val, key) => fn.execute(toList(val, key, iterable))
@@ -16,6 +16,14 @@ function runForeach(fn, iterable) {
 
         case TYPE.hashmap:
             return hashmapForEach(iterable, foreachFn)
+
+        case TYPE.string:
+            // convert to vector of characters
+            let vector = vectorType(iterable.value.split('').map((char) => stringType(char)))
+            // run foreach
+            vectorForEach(vector, foreachFn)
+
+            return nullType()
 
         default:
             assert(false, `Second parameter to map must be an iteratable type`)

@@ -1,6 +1,7 @@
 import buildForms from './builders'
 import converterForms from './converters'
 import filterForms from './filter'
+import findForm from './find'
 import foreachForm from './foreach'
 import getterForms from './getters'
 import mapForm from './map'
@@ -14,6 +15,7 @@ export default [
     ...buildForms,
     ...converterForms,
     ...filterForms,
+    findForm,
     foreachForm,
     ...getterForms,
     mapForm,

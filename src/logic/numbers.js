@@ -104,4 +104,40 @@ export default [
             return numberType(Math.sqrt(num.value))
         }),
     ],
+    [
+        tokenType('ceil'),
+        functionType(`(ceil number)`, (params) => {
+            let num = listGetAtIndex(params, 0)
+            assert(num.type === TYPE.number, `ceil only works on numbers`)
+
+            return numberType(Math.ceil(num.value))
+        }),
+    ],
+    [
+        tokenType('floor'),
+        functionType(`(floor number)`, (params) => {
+            let num = listGetAtIndex(params, 0)
+            assert(num.type === TYPE.number, `floor only works on numbers`)
+
+            return numberType(Math.floor(num.value))
+        }),
+    ],
+    [
+        tokenType('abs'),
+        functionType(`(abs number)`, (params) => {
+            let num = listGetAtIndex(params, 0)
+            assert(num.type === TYPE.number, `abs only works on numbers`)
+
+            return numberType(Math.abs(num.value))
+        }),
+    ],
+    [
+        tokenType('round'),
+        functionType(`(round number)`, (params) => {
+            let num = listGetAtIndex(params, 0)
+            assert(num.type === TYPE.number, `round only works on numbers`)
+
+            return numberType(Math.round(num.value))
+        }),
+    ],
 ]

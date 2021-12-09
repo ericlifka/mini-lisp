@@ -1,4 +1,4 @@
-import { functionType, tokenType, TYPE } from '../types/types'
+import { functionType, tokenType, stringType, vectorType, TYPE } from '../types/types'
 import { listFilter, listGetAtIndex, toList } from '../types/list'
 import { vectorFilter } from '../types/vector'
 import { assert } from '../assert'
@@ -17,6 +17,14 @@ function runFilter(fn, iterable) {
 
         case TYPE.hashmap:
             return hashmapFilter(iterable, filterFn)
+
+        case TYPE.string:
+            // convert to vector of characters
+            let vector = vectorType(iterable.value.split('').map((char) => stringType(char)))
+            // apply filter
+            let filtered = vectorFilter(vector, filterFn)
+            // convert back to a string
+            return stringType(filtered.value.map((char) => char.value).join(''))
 
         default:
             assert(false, `Second parameter to filter must be an iterable type`)

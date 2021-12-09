@@ -11,8 +11,26 @@ const stdLib = `
 (declare-macro -- (param)
   \`(update ,param (- ,param 1)))
 
+(function incr (num)
+  (if (is-null num) 1 (+ num 1)))
+
+(function decr (num)
+  (if (is-null num) -1 (- num 1)))
+
 (declare-macro not-null (param)
   \`(not (is-null ,param)))
+
+(function median (numbers)
+  (let (len (length numbers)
+        mid (/ (decr len) 2))
+    (/ (+ (get numbers (floor mid))
+          (get numbers (ceil mid)))
+       2)))
+
+(function addr (left right) (+ left right))
+
+(function mean (numbers)
+  (/ (reduce addr numbers) (length numbers)))
 
 (function matrix-add (left right)
   (map 

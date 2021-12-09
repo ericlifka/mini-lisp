@@ -1,6 +1,6 @@
 import { assert } from '../assert'
 import { listGetAtIndex, listMap, toList } from '../types/list'
-import { functionType, tokenType, numberType, TYPE } from '../types/types'
+import { functionType, tokenType, stringType, vectorType, TYPE } from '../types/types'
 import { vectorMap } from '../types/vector'
 import { hashmapMap } from '../types/hashmap'
 
@@ -16,6 +16,14 @@ function runMap(fn, iterable) {
 
         case TYPE.hashmap:
             return hashmapMap(iterable, mapFn)
+
+        case TYPE.string:
+            // convert to vector of characters
+            let vector = vectorType(iterable.value.split('').map((char) => stringType(char)))
+            // apply map
+            let results = vectorMap(vector, mapFn)
+            // convert back to a string
+            return stringType(results.value.map((char) => char.value).join(''))
 
         default:
             assert(false, `Second parameter to map must be an iteratable type`)
