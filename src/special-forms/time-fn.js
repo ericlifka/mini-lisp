@@ -1,7 +1,22 @@
 import { arrayOfArguments } from '../destructuring'
 import { printToString } from '../logger'
 import { toList } from '../types/list'
-import { functionType, specialFormType, tokenType, TYPE } from '../types/types'
+import { functionType, tokenType, TYPE } from '../types/types'
+
+function flabel(str) {
+    while (str.length < 20) {
+        str += ' '
+    }
+    return str.slice(0, 20)
+}
+
+function fnum(n) {
+    let str = `${n}`
+    while (str.length < 5) {
+        str += '0'
+    }
+    return str.slice(0, 5) + 's'
+}
 
 function timeExecutionForm(params) {
     let [timedFunction] = arrayOfArguments(params, 1)
@@ -9,7 +24,7 @@ function timeExecutionForm(params) {
     let checkpoint = startTime
     let count = 1
 
-    console.log('time-function, tracking started\n')
+    console.log('\ntime-function - tracking started\n')
 
     let result = timedFunction.execute(
         toList(
@@ -20,7 +35,7 @@ function timeExecutionForm(params) {
                 let ctime = (newCheckpoint - checkpoint) / 1000
                 let ttime = (newCheckpoint - startTime) / 1000
 
-                console.log(`  checkpoint ${label} - ${ctime}s elapsed, ${ttime}s total`)
+                console.log(`  checkpoint ${flabel(label)} | ${fnum(ctime)} elapsed | ${fnum(ttime)} total |`)
                 checkpoint = newCheckpoint
                 count++
             })
@@ -32,12 +47,12 @@ function timeExecutionForm(params) {
     let ttime = (finishTime - startTime) / 1000
 
     if (count > 1) {
-        console.log(`  final - ${ctime}s elapsed, ${ttime}s total`)
+        console.log(`  checkpoint ${flabel(':final')} | ${fnum(ctime)} elapsed | ${fnum(ttime)} total |`)
     } else {
-        console.log(`  final - ${ttime}s total`)
+        console.log(`  final | ${fnum(ttime)} total`)
     }
-    console.log('\ntime-function, tracking stopped')
-    console.log(`\nresult:\n\t${printToString(result)}`)
+    console.log(`\ntime-function - tracking stopped - ${ttime}s`)
+    console.log(`\nresult:\n\t${printToString(result)}\n`)
 
     return result
 }
