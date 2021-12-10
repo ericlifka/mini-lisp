@@ -1,5 +1,5 @@
-import { listGetAtIndex, listLength } from '../types/list'
-import { functionType, hashmapType, nullType, tokenType, TYPE } from '../types/types'
+import { listGetAtIndex, promoteConsToList } from '../types/list'
+import { consType, functionType, hashmapType, nullType, tokenType, TYPE } from '../types/types'
 import { volatileHashmapSet } from '../types/hashmap'
 import { vectorFromList } from '../types/vector'
 

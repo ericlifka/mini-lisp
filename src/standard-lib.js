@@ -17,8 +17,8 @@ const stdLib = `
 (function decr (num)
   (if (is-null num) -1 (- num 1)))
 
-(declare-macro not-null (param)
-  \`(not (is-null ,param)))
+(function not-null (param)
+  (not (is-null param)))
 
 (function median (numbers)
   (let (len (length numbers)

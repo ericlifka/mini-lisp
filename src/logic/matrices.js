@@ -89,46 +89,77 @@ function matrixReduceForm(params) {
 
 function matrixGetForm(params) {
     let [matrix, x, y] = arrayOfArguments(params, 3)
-    assert(
-        matrix.type === TYPE.vector && x.type === TYPE.number && y.type === TYPE.number,
-        `TypeError: matrix-get expects matrix number number for params`
-    )
-    assert(
-        y.value >= 0 && y.value < matrix.value.length,
-        `Error: matrix-get y out of bounds ${y.value}:${matrix.value.length}`
-    )
-    let vector = matrix.value[y.value]
-    assert(
-        x.value >= 0 && x.value < vector.value.length,
-        `Error: matrix-get x out of bounds ${x.value}:${vector.value.length}`
-    )
 
-    return vector.value[x.value]
+    const runGet = (matrix, x, y) => {
+        assert(
+            matrix.type === TYPE.vector && x.type === TYPE.number && y.type === TYPE.number,
+            `TypeError: matrix-get expects matrix number number for params`
+        )
+        assert(
+            y.value >= 0 && y.value < matrix.value.length,
+            `Error: matrix-get y out of bounds ${y.value}:${matrix.value.length}`
+        )
+        let vector = matrix.value[y.value]
+        assert(
+            x.value >= 0 && x.value < vector.value.length,
+            `Error: matrix-get x out of bounds ${x.value}:${vector.value.length}`
+        )
+
+        return vector.value[x.value]
+    }
+
+    if (x.type === TYPE.null) {
+        return functionType(`(bound-matrix-get x y)`, (params) => {
+            let [x, y] = arrayOfArguments(params, 2)
+
+            return runGet(matrix, x, y)
+        })
+    } else {
+        return runGet(matrix, x, y)
+    }
 }
 
 function matrixSetVolatileForm(params) {
-    let [matrix, x, y, value] = vectorFromList(params).value
+    let [matrix, x, y, value] = arrayOfArguments(params, 4)
 
-    assert(matrix && matrix.type === TYPE.vector, `TypeError: matrix-set-volatile matrix must be a vector`)
-    assert(x && x.type === TYPE.number, `TypeError: matrix-set-volatile x must be a number`)
-    assert(y && y.type === TYPE.number, `TypeError: matrix-set-volatile y must be a number`)
-    assert(value && value.type, `TypeError: matrix-set-volatile value must be provided to set`)
+    assert(matrix.type === TYPE.vector, `TypeError: matrix-set-volatile matrix must be a vector`)
+    assert(x.type === TYPE.number, `TypeError: matrix-set-volatile x must be a number`)
+    assert(y.type === TYPE.number, `TypeError: matrix-set-volatile y must be a number`)
 
     let arr = matrix.value
     y = y.value
     x = x.value
-    assert(y >= 0 && y < arr.length, `TypeError: matrix-set-volatile y out of matrix bounds`)
+    assert(y >= 0 && y < arr.length, `TypeError: matrix-set-volatile y out of matrix bounds ${y}:${arr.length}`)
     let vec = arr[y].value
-    assert(x >= 0 && x < vec.length, `TypeError: matrix-set-volatile x out of matrix bounds`)
+    assert(x >= 0 && x < vec.length, `TypeError: matrix-set-volatile x out of matrix bounds ${x}:${vec.length}`)
 
     vec[x] = value
     return matrix
+}
+
+function matrixHeightForm(params) {
+    let matrix = listGetAtIndex(params, 0)
+    assert(matrix.type === TYPE.vector, `TypeError: matrix-height requires a matrix`)
+
+    return numberType(matrix.value.length)
+}
+
+function matrixWidthForm(params) {
+    let matrix = listGetAtIndex(params, 0)
+    assert(
+        matrix.type === TYPE.vector && matrix.value[0].type === TYPE.vector,
+        `TypeError: matrix-height requires a matrix`
+    )
+
+    return numberType(matrix.value[0].value.length)
 }
 
 export default [
     [tokenType('matrix-print'), functionType(`(matrix-print matrix)`, matrixPrintForm)],
     [tokenType('matrix-create'), functionType(`(matrix-create width height? valueSetterFn?)`, matrixCreateForm)],
     [tokenType('matrix-get'), functionType(`(matrix-get matrix x y)`, matrixGetForm)],
+    [tokenType('matrix-height'), functionType(`(matrix-width matrix)`, matrixHeightForm)],
+    [tokenType('matrix-width'), functionType(`(matrix-width matrix)`, matrixWidthForm)],
     [tokenType('matrix-set-volatile'), functionType(`(matrix-set-volatile matrix x y value)`, matrixSetVolatileForm)],
     [
         tokenType('matrix-reduce'),

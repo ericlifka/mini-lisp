@@ -10,6 +10,7 @@ import letForm from './let'
 import moduleForm from './module'
 import quoteForm from './quote'
 import runnables from './runnables'
+import timeFnForm from './time-fn'
 import updateForm from './update'
 import whileForm from './while'
 
@@ -26,6 +27,7 @@ export default [
     moduleForm,
     quoteForm,
     ...runnables,
+    timeFnForm,
     updateForm,
     whileForm,
 ]
