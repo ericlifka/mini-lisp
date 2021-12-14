@@ -25,6 +25,7 @@ export default [
     ifForm,
     importForm,
     letForm,
+    loopForm,
     moduleForm,
     quoteForm,
     ...runnables,
