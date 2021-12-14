@@ -36,3 +36,6 @@ for loop
 comment strings for documenting functions
 
 some kind of return keyword, possibly through captured errors
+
+move matrix and functions to aa matrix package so it's only there when imported
+  - find way of doing built in modules elegantly

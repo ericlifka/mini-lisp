@@ -1,8 +1,8 @@
 import { assert } from './assert'
 import { printToString } from './logger'
 import { hashmapGet } from './types/hashmap'
-import { addToList, listFirst, listFromVector, listRest, promoteConsToList } from './types/list'
-import { listType, nullType, tokenType, TYPE } from './types/types'
+import { listFirst, listRest, promoteConsToList } from './types/list'
+import { nullType, tokenType, TYPE, vectorType } from './types/types'
 import { vectorFromList } from './types/vector'
 
 export function matchParameter(param, arg) {
@@ -40,8 +40,25 @@ function matchVectorParameter(paramsList, argsVector) {
         argsVector.type === TYPE.vector,
         `TypeError: Trying to destructure vector, recieved ${argsVector.type}:${printToString(argsVector)}`
     )
+    let paramsVector = vectorFromList(listRest(paramsList))
+    let scopeValues = []
 
-    return matchListParameter(listRest(paramsList), listFromVector(argsVector))
+    for (let i = 0; i < paramsVector.value.length; i++) {
+        let param = paramsVector.value[i]
+        let arg = argsVector.value[i] || nullType()
+
+        if (param.type === TYPE.token && param.value.slice(0, 3) === '...') {
+            let argsRemaining = vectorType(argsVector.value.slice(i))
+            let restParam = tokenType(param.value.slice(3)) // cut off '...' from token name
+
+            scopeValues.push([restParam, argsRemaining])
+            argsVector = vectorType([])
+        } else {
+            scopeValues = scopeValues.concat(matchParameter(param, arg))
+        }
+    }
+
+    return scopeValues
 }
 
 function matchHashmap(paramsList, argsHashmap) {
@@ -50,25 +67,24 @@ function matchHashmap(paramsList, argsHashmap) {
         `TypeError: Trying to destructure hashmap, recieved ${argsHashmap.type}:${printToString(argsHashmap)}`
     )
 
-    let params = vectorFromList(listRest(paramsList)).value
-    let lvals = listType()
-    let rvals = listType()
+    let paramsVector = vectorFromList(listRest(paramsList))
+    let scopeValues = []
 
-    for (let i = 0; i < params.length; i += 2) {
-        let lookupKey = params[i]
-        let assignKey = params[i + 1]
+    for (let i = 0; i < paramsVector.value.length; i += 2) {
+        let lookupKey = paramsVector.value[i]
+        let assignKey = paramsVector.value[i + 1]
         assert(
-            lookupKey && assignKey && lookupKey.type === TYPE.token && assignKey.type === TYPE.token,
-            `TypeError: Destructuring on hashmaps only works for keys of Token type`
+            lookupKey &&
+                assignKey &&
+                (lookupKey.type === TYPE.token || lookupKey.type === TYPE.string || lookupKey.type === TYPE.number),
+            `TypeError: Destructuring on hashmaps only works for keys of type token, string, or number`
         )
-
         let value = hashmapGet(argsHashmap, lookupKey)
 
-        addToList(lvals, assignKey)
-        addToList(rvals, value)
+        scopeValues = scopeValues.concat(matchParameter(assignKey, value))
     }
 
-    return matchListParameter(lvals, rvals)
+    return scopeValues
 }
 
 export function matchListParameter(paramsList, argsList) {

@@ -21,10 +21,11 @@ const stdLib = `
   (not (is-null param)))
 
 (function median (numbers)
-  (let (len (length numbers)
-        mid (/ (decr len) 2))
-    (/ (+ (get numbers (floor mid))
-          (get numbers (ceil mid)))
+  (let (sorted (sort sort-ascending numbers)
+        len    (length sorted)
+        mid    (/ (decr len) 2))
+    (/ (+ (get sorted (floor mid))
+          (get sorted (ceil mid)))
        2)))
 
 (function addr (left right) (+ left right))
@@ -64,6 +65,25 @@ const stdLib = `
         (update queue (rest queue)))
       max))
 
+(function matrix-protected-getter (matrix)
+  (let (ymax (length matrix)
+        xmax (length (get matrix 0)))
+    (fn (x y)
+      (if (or (< x 0)
+              (< y 0)
+              (>= x xmax)
+              (>= y ymax))
+        null
+        (matrix-get matrix x y)))))
+
+(function matrix-neighbors-getter (matrix)
+  (let (getter (matrix-protected-getter matrix))
+    (fn (x y)
+      (filter not-null
+        [ (getter (incr x) y)
+          (getter (decr x) y)
+          (getter x (incr y))
+          (getter x (decr y)) ]))))
 `
 
 export function loadStandardLibIntoScope(scope) {
