@@ -12,16 +12,29 @@ function padTo(str, width, char) {
     return str
 }
 
-function vectorPrint(vector, padding) {
-    return '[' + vector.value.map((entity) => padTo(printToString(entity), padding, ' ')).join(' ') + ']'
+function vectorPrint(vector, padding, formatter) {
+    return (
+        '[' +
+        vector.value
+            .map((entity) => {
+                if (formatter && formatter.type === TYPE.function) {
+                    entity = formatter.execute(toList(entity))
+                }
+                return padTo(entity.value + '', padding, ' ')
+            })
+            .join(' ') +
+        ']'
+    )
 }
 
 function matrixPrintForm(params) {
     let matrix = listGetAtIndex(params, 0)
     let padding = listGetAtIndex(params, 1)
+    let formatter = listGetAtIndex(params, 2)
+
     padding = padding.type === TYPE.number ? padding.value : 0
 
-    let matrixStrs = matrix.value.map((vector) => vectorPrint(vector, padding))
+    let matrixStrs = matrix.value.map((vector) => vectorPrint(vector, padding, formatter))
     return stringType('[' + matrixStrs.join('\n ') + ']\n')
 }
 

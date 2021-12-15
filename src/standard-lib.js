@@ -76,14 +76,6 @@ const stdLib = `
         null
         (matrix-get matrix x y)))))
 
-(function matrix-neighbors-getter (matrix)
-  (let (getter (matrix-protected-getter matrix))
-    (fn (x y)
-      (filter not-null
-        [ (getter (incr x) y)
-          (getter (decr x) y)
-          (getter x (incr y))
-          (getter x (decr y)) ]))))
 `
 
 export function loadStandardLibIntoScope(scope) {

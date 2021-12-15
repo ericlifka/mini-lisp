@@ -13,7 +13,6 @@ import quoteForm from './quote'
 import runnables from './runnables'
 import timeFnForm from './time-fn'
 import updateForm from './update'
-import whileForm from './while'
 
 export default [
     applyForm,
@@ -31,5 +30,4 @@ export default [
     ...runnables,
     timeFnForm,
     updateForm,
-    whileForm,
 ]
