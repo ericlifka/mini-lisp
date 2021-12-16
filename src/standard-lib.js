@@ -76,6 +76,10 @@ const stdLib = `
         null
         (matrix-get matrix x y)))))
 
+(function reverse (lst)
+  (if (== 0 (length lst))
+    '()
+    (concat (reverse (rest lst)) (list (first lst)))))
 `
 
 export function loadStandardLibIntoScope(scope) {

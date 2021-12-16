@@ -1,7 +1,7 @@
 import { assert } from '../assert'
 import { arrayOfArguments } from '../destructuring'
 import { hashmapSet } from '../types/hashmap'
-import { cons, promoteConsToList } from '../types/list'
+import { cons, listFromVector, promoteConsToList } from '../types/list'
 import { consType, functionType, tokenType, TYPE } from '../types/types'
 import { vectorFromList, vectorPush } from '../types/vector'
 
@@ -36,11 +36,17 @@ function joinList(consChain1, consChain2) {
 function concatForm(params) {
     let args = vectorFromList(params).value
     let last = args[args.length - 1]
+    if (last.type === TYPE.vector) {
+        last = listFromVector(last)
+    }
     assert(last.type === TYPE.list, `concat only supports joining lists - ${last.type}`)
 
     let result = last.head
     for (let i = args.length - 2; i >= 0; i--) {
-        assert(args[i].type === TYPE.list, `concat only supports joining lists - ${args[i].type}`)
+        if (args[i].type === TYPE.vector) {
+            args[i] = listFromVector(args[i])
+        }
+        assert(args[i].type === TYPE.list, `concat only supports joining lists and vectors - ${args[i].type}`)
 
         result = joinList(args[i].head, result)
     }
@@ -51,6 +57,4 @@ function concatForm(params) {
 export default [
     [tokenType('push'), functionType(`(push iterable entity)`, pushForm)],
     [tokenType('concat'), functionType(`(concat list1 ... list2)`, concatForm)],
-    // need pattern matching for this form to work right
-    // [tokenType('pop'), functionType(`(pop vector)`, (params) => vectorPop(listGetAtIndex(params, 0)))],
 ]

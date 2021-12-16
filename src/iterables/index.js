@@ -8,7 +8,7 @@ import mapForm from './map'
 import modifierForms from './modifiers'
 import reduceForm from './reduce'
 import sequenceForms from './sequences'
-import setForm from './set'
+import setForms from './set'
 import sortForms from './sort'
 
 export default [
@@ -22,6 +22,6 @@ export default [
     ...modifierForms,
     reduceForm,
     ...sequenceForms,
-    setForm,
+    ...setForms,
     ...sortForms,
 ]

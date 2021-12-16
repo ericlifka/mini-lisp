@@ -1,8 +1,9 @@
 import { listGetAtIndex, listSet } from '../types/list'
 import { functionType, tokenType, TYPE } from '../types/types'
-import { hashmapSet } from '../types/hashmap'
+import { hashmapSet, volatileHashmapSet } from '../types/hashmap'
 import { assert } from '../assert'
-import { vectorSet } from '../types/vector'
+import { vectorSet, volatileVectorSet } from '../types/vector'
+import { arrayOfArguments } from '../destructuring'
 
 function runSet(entity, key, value) {
     switch (entity.type) {
@@ -37,4 +38,21 @@ function setForm(params) {
     }
 }
 
-export default [tokenType('set'), functionType('(set iterable key|index value)', setForm)]
+function setVolatileForm(args) {
+    let [iterable, key, value] = arrayOfArguments(args, 3)
+
+    if (iterable.type === TYPE.vector) {
+        return volatileVectorSet(iterable, key, value)
+    } else if (iterable.type === TYPE.hashmap) {
+        return volatileHashmapSet(iterable, key, value)
+    } else {
+        assert(false, `set-volatile only works for vectors and hashmaps, not ${iterable.type}`)
+    }
+
+    return iterable
+}
+
+export default [
+    [tokenType('set'), functionType('(set iterable key|index value)', setForm)],
+    [tokenType('set-volatile'), functionType(`(set-volatile iterable key|index value)`, setVolatileForm)],
+]

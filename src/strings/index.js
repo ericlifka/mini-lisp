@@ -95,6 +95,30 @@ function strContainsForm(params) {
     return booleanType(str1.value.indexOf(str2.value) > -1)
 }
 
+function isCapitalizedForm(args) {
+    let str = listGetAtIndex(args, 0)
+    assert(str.type === TYPE.string, `is-capitalized function only works on strings, got: ${str.type}`)
+
+    let first = str.value[0]
+    return booleanType(first === first.toLocaleUpperCase())
+}
+
+function capitalizeForm(args) {
+    let str = listGetAtIndex(args, 0)
+    assert(str.type === TYPE.string, `capitalize function only works on strings, got: ${str.type}`)
+
+    let first = str.value[0].toLocaleUpperCase()
+    let rest = str.value.slice(1)
+    return stringType(first + rest)
+}
+
+function capitalizeAllForm(args) {
+    let str = listGetAtIndex(args, 0)
+    assert(str.type === TYPE.string, `capitalize-all function only works on strings, got: ${str.type}`)
+
+    return stringType(str.value.toLocaleUpperCase())
+}
+
 export default [
     [tokenType('split'), functionType(`(split str|regex str)`, stringSplitForm)],
     [tokenType('join'), functionType(`(join str vector)`, stringJoinForm)],
@@ -102,4 +126,7 @@ export default [
     [tokenType('to-number'), functionType(`(to-number string)`, toNumberForm)],
     [tokenType('trim'), functionType(`(trim string)`, trimForm)],
     [tokenType('str-contains'), functionType(`(str-contains str1 str2)`, strContainsForm)],
+    [tokenType('is-capitalized'), functionType(`(is-capitalized str)`, isCapitalizedForm)],
+    [tokenType('capitalize'), functionType(`(capitalize str)`, capitalizeForm)],
+    [tokenType('capitalize-all'), functionType(`(capitalize-all str)`, capitalizeAllForm)],
 ]
