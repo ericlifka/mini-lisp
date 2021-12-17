@@ -32,7 +32,7 @@ export function vectorSet(vector, index, value) {
 
 export function volatileVectorSet(vector, index, value) {
     assert(vector.type === TYPE.vector && index.type === TYPE.number, `TypeError: Set expects a vector and an index`)
-    assert(vector.value >= 0, `TypeError: index for vector must be positive number`)
+    assert(index.value >= 0, `TypeError: index for vector must be positive number`)
 
     for (let i = vector.value.length; i < index.value; i++) {
         vector.value[i] = nullType()

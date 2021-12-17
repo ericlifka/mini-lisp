@@ -12,6 +12,7 @@ import {
     TYPE,
     vectorType,
 } from '../types/types'
+import { vectorFromList } from '../types/vector'
 
 function executeSplit(splitter, str) {
     assert(str.type === TYPE.string, `split: arguments must be strings`)
@@ -35,6 +36,10 @@ function stringSplitForm(params) {
 }
 
 function executeJoin(joiner, vector) {
+    if (vector.type === TYPE.list) {
+        vector = vectorFromList(vector)
+    }
+
     return stringType(
         vector.value
             .map((elem) => toStringForm(toList(elem)))
@@ -57,6 +62,10 @@ function stringJoinForm(params) {
     } else {
         return executeJoin(joiner, vector)
     }
+}
+
+function strAddForm(args) {
+    return stringJoinForm(toList(stringType(''), args))
 }
 
 function toStringForm(params) {
@@ -122,6 +131,7 @@ function capitalizeAllForm(args) {
 export default [
     [tokenType('split'), functionType(`(split str|regex str)`, stringSplitForm)],
     [tokenType('join'), functionType(`(join str vector)`, stringJoinForm)],
+    [tokenType('str-add'), functionType(`(str-add ...strings)`, strAddForm)],
     [tokenType('to-string'), functionType(`(to-string entity)`, toStringForm)],
     [tokenType('to-number'), functionType(`(to-number string)`, toNumberForm)],
     [tokenType('trim'), functionType(`(trim string)`, trimForm)],

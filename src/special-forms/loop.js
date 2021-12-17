@@ -18,7 +18,7 @@ goals for this special form:
 */
 
 import { assert } from '../assert'
-import { arrayOfArguments } from '../destructuring'
+import { arrayOfArguments, matchParameter } from '../destructuring'
 import { runCode } from '../eval'
 import { isTruthy } from '../logic/booleans'
 import { createScope, setOnScope } from '../scope'
@@ -44,10 +44,16 @@ function runForLoop(special, body, scope) {
         scope
     )
 
-    setOnScope(loopScope, symbol, runCode(value, loopScope))
+    matchParameter(symbol, runCode(value, loopScope)).forEach(([sym, val]) => {
+        setOnScope(loopScope, sym, val)
+    })
+
     while (isTruthy(runCode(check, loopScope))) {
         runCode(body, loopScope)
-        setOnScope(loopScope, symbol, runCode(update, loopScope))
+
+        matchParameter(symbol, runCode(update, loopScope)).forEach(([sym, val]) => {
+            setOnScope(loopScope, sym, val)
+        })
     }
 
     return result
@@ -79,8 +85,11 @@ function runInLoop(special, body, scope) {
     let collection = runCode(collectionStmnt, scope)
     let key, val
     if (tokens.type === TYPE.list) {
-        key = listGetAtIndex(tokens, 0)
-        val = listGetAtIndex(tokens, 1)
+        val = listGetAtIndex(tokens, 0)
+        key = listGetAtIndex(tokens, 1)
+        if (key.type === TYPE.null) {
+            key = null
+        }
     } else if (_in.value === ':in') {
         val = tokens
     } else if (_in.value === ':of') {
@@ -122,8 +131,18 @@ function runInLoop(special, body, scope) {
             k = v
             v = hashmapGet(collection, k)
         }
-        key && setOnScope(loopScope, key, k)
-        val && setOnScope(loopScope, val, v)
+        if (key) {
+            matchParameter(key, k).forEach(([sym, val]) => {
+                setOnScope(loopScope, sym, val)
+            })
+        }
+        if (val) {
+            matchParameter(val, v).forEach(([sym, val]) => {
+                setOnScope(loopScope, sym, val)
+            })
+        }
+        // key && setOnScope(loopScope, key, k)
+        // val && setOnScope(loopScope, val, v)
 
         runCode(body, loopScope)
     }

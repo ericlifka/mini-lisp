@@ -167,6 +167,100 @@ function matrixWidthForm(params) {
     return numberType(matrix.value[0].value.length)
 }
 
+function dotProduct(vector1, vector2) {
+    let result = 0
+    for (let i = 0; i < vector1.value.length; i++) {
+        result += vector1.value[i].value * vector2.value[i].value
+    }
+    return numberType(result)
+}
+
+function inPlaceDotProduct(mLeft, row, mRight, column) {
+    let result = 0
+    let lRow = mLeft.value[row]
+    for (let i = 0; i < lRow.value.length; i++) {
+        result += lRow.value[i].value * mRight.value[i].value[column].value
+    }
+    return numberType(result)
+}
+
+function horizontalSlice(matrix, index) {
+    return matrix.value[index]
+}
+
+function verticalSlice(matrix, index) {
+    let newArr = []
+    for (let i = 0; i < matrix.value.length; i++) {
+        newArr[i] = matrix.value[i].value[index]
+    }
+    return vectorType(newArr)
+}
+
+function addMatrices(m1, m2) {
+    assert(m1.value.length === m2.value.length, `matrix-add: matrices must have same height`)
+    assert(m1.value[0].value.length === m2.value[0].value.length, `matrix-add: matrices must have same width`)
+
+    let newMatrix = vectorType()
+    for (let y = 0; y < m1.value.length; y++) {
+        newMatrix.value[y] = vectorType()
+        for (let x = 0; x < m1.value[y].value.length; x++) {
+            newMatrix.value[y].value[x] = numberType(m1.value[y].value[x].value + m2.value[y].value[x].value)
+        }
+    }
+    return newMatrix
+}
+
+function matrixAddForm(args) {
+    let [m1, m2] = arrayOfArguments(args, 2)
+    assert(m1.type === TYPE.vector && m1.value[0].type === TYPE.vector, `matrix-add: args must be matrices`)
+    assert(m2.type === TYPE.vector && m2.value[0].type === TYPE.vector, `matrix-add: args must be matrices`)
+
+    return addMatrices(m1, m2)
+}
+
+function multiplyMatrices(m1, m2) {
+    assert(m1.value[0].value.length === m2.value.length, `matrix-multiply: left width must match right height`)
+
+    let _llen = m1.value.length
+    let _rlen = m2.value[0].value.length
+    let nM = vectorType()
+
+    for (let y = 0; y < _llen; y++) {
+        // let hSlice = horizontalSlice(m1, y)
+        // console.log('horizontal slice: ', printToString(hSlice))
+        nM.value[y] = vectorType()
+
+        for (let x = 0; x < _rlen; x++) {
+            // let vSlice = verticalSlice(m2, x)
+            // console.log('vertical slice: ', printToString(vSlice))
+            // let dot = dotProduct(hSlice, vSlice)
+            let dot = inPlaceDotProduct(m1, y, m2, x)
+            nM.value[y].value[x] = dot
+            // console.log('dot product: ', dot)
+        }
+    }
+    return nM
+}
+
+function matrixMultiplyForm(args) {
+    let [m1, m2] = arrayOfArguments(args, 2)
+    assert(m1.type === TYPE.vector && m1.value[0].type === TYPE.vector, `matrix-multiply: args must be matrices`)
+    assert(m2.type === TYPE.vector && m2.value[0].type === TYPE.vector, `matrix-multiply: args must be matrices`)
+
+    return multiplyMatrices(m1, m2)
+}
+
+function dotProductForm(args) {
+    let [vector1, vector2] = arrayOfArguments(args, 2)
+    assert(
+        vector1.type === TYPE.vector && vector2.type === TYPE.vector,
+        `dot-product requires two vectors, got ${vector1.type} & ${vector2.type}`
+    )
+    assert(vector1.value.length === vector2.value.length, `dot-product vectors must be same length`)
+
+    return dotProduct(vector1, vector2)
+}
+
 export default [
     [tokenType('matrix-print'), functionType(`(matrix-print matrix)`, matrixPrintForm)],
     [tokenType('matrix-create'), functionType(`(matrix-create width height? valueSetterFn?)`, matrixCreateForm)],
@@ -178,4 +272,7 @@ export default [
         tokenType('matrix-reduce'),
         functionType(`(matrix-reduce (fn (accum val x y) accum) accum matrix))`, matrixReduceForm),
     ],
+    [tokenType('dot-product'), functionType(`(dot-product vector1 vector2)`, dotProductForm)],
+    [tokenType('matrix-add'), functionType(`(matrix-add matrix1 matrix2)`, matrixAddForm)],
+    [tokenType('matrix-multiply'), functionType(`(matrix-multiply matrix1 matrix2)`, matrixMultiplyForm)],
 ]

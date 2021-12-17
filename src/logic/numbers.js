@@ -96,6 +96,24 @@ export default [
         ),
     ],
     [
+        tokenType('is-even'),
+        functionType(`(is-even number)`, (args) => {
+            let num = listGetAtIndex(args, 0)
+            assert(num.type === TYPE.number, `is-even only works on numbers`)
+
+            return booleanType(num.value % 2 === 0)
+        }),
+    ],
+    [
+        tokenType('is-odd'),
+        functionType(`(is-odd number)`, (args) => {
+            let num = listGetAtIndex(args, 0)
+            assert(num.type === TYPE.number, `is-odd only works on numbers`)
+
+            return booleanType(num.value % 2 !== 0)
+        }),
+    ],
+    [
         tokenType('sqrt'),
         functionType('(sqrt number)', (params) => {
             let num = listGetAtIndex(params, 0)
