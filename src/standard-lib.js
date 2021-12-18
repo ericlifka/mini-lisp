@@ -67,6 +67,9 @@ const stdLib = `
   (if (== 0 (length lst))
     '()
     (concat (reverse (rest lst)) (list (first lst)))))
+
+(declare-macro declare-memoized (name params ...body)
+  \`(declare ,name (memoize (fn ,params ,(cons 'do body)))))
 `
 
 export function loadStandardLibIntoScope(scope) {

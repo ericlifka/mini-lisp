@@ -8,6 +8,7 @@ import ifForm from './if'
 import importForm from './import'
 import letForm from './let'
 import loopForm from './loop'
+import memoizeForms from './memoize'
 import moduleForm from './module'
 import quoteForm from './quote'
 import runnables from './runnables'
@@ -25,6 +26,7 @@ export default [
     importForm,
     letForm,
     loopForm,
+    ...memoizeForms,
     moduleForm,
     quoteForm,
     ...runnables,

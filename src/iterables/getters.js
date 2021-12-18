@@ -17,6 +17,11 @@ function runGet(entity, key) {
         case TYPE.hashmap:
             return hashmapGet(entity, key)
 
+        case TYPE.string:
+            assert(key.type === TYPE.number, `TypeError: second parameter to get-str must be a number`)
+            let ch = entity.value[key.value]
+            return ch ? stringType(ch) : nullType()
+
         default:
             assert(false, `TypeError: first parameter to get must be an iterable type`)
     }
@@ -76,8 +81,12 @@ export function restForm(params) {
 
 export function lastForm(params) {
     let param = listGetAtIndex(params, 0)
-    let length = lengthForm(params)
 
+    if (param.type === TYPE.hashmap) {
+        return hashmapGet(param, param.keys[param.keys.length - 1])
+    }
+
+    let length = lengthForm(params)
     return getForm(toList(param, numberType(length.value - 1)))
 }
 

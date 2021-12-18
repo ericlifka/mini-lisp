@@ -110,7 +110,7 @@ export function hashmapSort(hashmap, sorter) {
 
     let newHashmap = hashmapMap(hashmap, (entity) => entity)
 
-    newHashmap.keys.sort((key1, key2) => {
+    newHashmap.keys = newHashmap.keys.sort((key1, key2) => {
         return sorter(hashmapGet(newHashmap, key1), hashmapGet(newHashmap, key2), key1, key2)
     })
 
