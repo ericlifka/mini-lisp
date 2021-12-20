@@ -70,6 +70,12 @@ const stdLib = `
 
 (declare-macro declare-memoized (name params ...body)
   \`(declare ,name (memoize (fn ,params ,(cons 'do body)))))
+
+(declare-macro second (iter)
+  \`(get ,iter 1))
+
+  (declare-macro third (iter)
+  \`(get ,iter 2))
 `
 
 export function loadStandardLibIntoScope(scope) {

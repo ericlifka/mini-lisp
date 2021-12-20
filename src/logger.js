@@ -29,6 +29,7 @@ export const printToString = (cell) => {
         case TYPE.hashmap:
             return hashmapToString(cell)
 
+        case TYPE.specialForm:
         case TYPE.function:
         case TYPE.macro:
             return `${cell.doc}`

@@ -55,4 +55,5 @@ function setVolatileForm(args) {
 export default [
     [tokenType('set'), functionType('(set iterable key|index value)', setForm)],
     [tokenType('set-volatile'), functionType(`(set-volatile iterable key|index value)`, setVolatileForm)],
+    [tokenType('set*'), functionType(`(set-volatile iterable key|index value)`, setVolatileForm)],
 ]
